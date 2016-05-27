@@ -364,7 +364,7 @@ bool CDar::eval_deletion(CRoute &route, eval_str &eval)
 	bool feasible;
 	CRoute route_tmp;
 	float z_old;
-	int i_request, p_node;
+	int p_node;
 	constraint_type constraint;
 
 	// Initialization
@@ -379,7 +379,6 @@ bool CDar::eval_deletion(CRoute &route, eval_str &eval)
 	eval.exm[0] = CON_MAXFLOAT; eval.exm[1] = CON_MAXFLOAT;
 
 	// 
-	i_request = eval.i_request;
 	p_node = eval.p_node;
 
 	// Remove the node from the route
