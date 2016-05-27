@@ -984,6 +984,7 @@ int C_SHP::SHP_writeShapeFromPath(char *Instance, long narcs, long *arc, int  *i
 				return -1;
 			}
 			n_rec++;
+                         SHPDestroyObject(shpObject);
 		}// for is
 	}
 	SHPClose(shpHandleI);
@@ -1040,6 +1041,7 @@ int C_SHP::SHP_Copy(char *filename){
 		x = SHPWriteObject(shpHandleW, -1, shpObject);
 		cc = DBFReadTuple(dbfHandle, i);
 		DBFWriteTuple(dbfHandleW, n_rec++, (void *)cc);
+                SHPDestroyObject(shpObject);
 	}
 	SHPClose(shpHandleW);
 	DBFClose(dbfHandleW);
@@ -1095,6 +1097,7 @@ int C_SHP::SHP_isPointOnArc(SHPHandle  shpHandle, XYPoint_STR p, int i_arc, C_IS
 			rvalue = 1;
 			goto terminate;
 		}
+                SHPDestroyObject(shpObject);
 	}
 	rvalue = 0;
 terminate:

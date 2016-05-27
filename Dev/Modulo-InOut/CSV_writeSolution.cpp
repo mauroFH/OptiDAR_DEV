@@ -1,4 +1,4 @@
-#include "../Modulo-Main/darh.h"
+    #include "../Modulo-Main/darh.h"
 
 /**
  * Writes the csv file containing the waypoints, and the corresponding shapefile
@@ -9,184 +9,184 @@
  * @return 
  */
 int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
-	SHPHandle shpHandle;
-	SHPObject  *shpObject = NULL;
-	XYPoint_STR v_stop, v_lastWritten, v1, v2;
-	int shpType, numElements, i_arc, k_arc, i_stop;
-	double padfMinBound[4], padfMaxBound[4];
-	//double L2;
-	Arc_STR *a;
-	IShape_STR *is;
-	ofstream fout;
-	int SessionId = Ist->SessionID;
-	int WaypointId = Ist->RouteID*CON_MAXWAYPOINTSROUTE + 1;
-	int SolutionId = Ist->SolutionID;
-	int VehicleId = Ist->TRoute.VehicleID;
-	int PointOrder = 1;
-	int RouteId = Ist->RouteID;
-	int RoutePointId = Ist->RouteID*CON_MAXSTOPSROUTE + 1;
+    SHPHandle shpHandle;
+    SHPObject  *shpObject = NULL;
+    XYPoint_STR v_stop, v_lastWritten, v1, v2;
+    int shpType, numElements, i_arc, k_arc, i_stop;
+    double padfMinBound[4], padfMaxBound[4];
+    //double L2;
+    Arc_STR *a;
+    IShape_STR *is;
+    ofstream fout;
+    int SessionId = Ist->SessionID;
+    int WaypointId = Ist->RouteID*CON_MAXWAYPOINTSROUTE + 1;
+    int SolutionId = Ist->SolutionID;
+    int VehicleId = Ist->TRoute.VehicleID;
+    int PointOrder = 1;
+    int RouteId = Ist->RouteID;
+    int RoutePointId = Ist->RouteID*CON_MAXSTOPSROUTE + 1;
 
-	v_lastWritten.X = v_lastWritten.Y = -1;
+    v_lastWritten.X = v_lastWritten.Y = -1;
 
-	shpHandle = SHPOpen(Ist->networkFileName, "rb");
-	if (shpHandle == NULL){
-		snprintf(buf, sizeof(buf), "Error opening  SHP file %s\n", Ist->networkFileName);
-		error.fatal(buf, __FUNCTION__);
-		return -1;
-	}
-	// get general file info
-	SHPGetInfo(shpHandle, &numElements, &shpType, padfMinBound, padfMaxBound);
-	if (shpType != 3){
-		snprintf(buf, sizeof(buf), " - wrong shpfile type %d, mut be 3", shpType);
-		error.fatal(buf, __FUNCTION__);
-		return -1;
-	}
-	// Open file
-	snprintf(buf, sizeof(buf), "%s//%s_Waypoint.csv", OUTPUTDIR, Instance);
-	fout.open(buf, ios::out);
-	if (!fout.is_open())
-	{
-		snprintf(buf, sizeof(buf), "File cannot be opened %s", buf);
-		error.fatal(buf, __FUNCTION__);
-		return(-1);
-	}
-	// write headings
-	// We remove it because CSV2DB does not manage the header
-	//CSV_writeWaypointsHeader(&fout);
-	//
-	// first stop
-	i_stop = 0;
-	CSV_writeWaypointsFirstArc(shpHandle, &fout, &WaypointId, SolutionId, VehicleId, &PointOrder, RoutePointId, RouteId, &v_lastWritten, mySHP, Ist);
-	// next  stops 
-	i_stop++;
-	if (i_stop >= Ist->TRoute.nstop)   // all stops written 
-		goto terminate;
-	//    
-	if (Ist->TRoute.v_stop_out[i_stop].StopOrPark == 0) // Stop Point
-		v_stop = Ist->v_Points[Ist->v_StopPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
-	else // parking point
-		v_stop = Ist->v_Points[Ist->v_ParkingPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
-	//
-	for (i_arc = 1; i_arc < Ist->TRoute.RArcs.npoints; i_arc++) {
-		//
-		if (Ist->TRoute.RArcs.arc[i_arc] < 0) continue;
-		k_arc = Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[i_arc]].original_Arc;
-		if (k_arc < 0) // dummy arc
-			continue;
-		a = &(Ist->v_SHP_Arcs_List[k_arc]);     // a is the 'oiginal' arc
-		//
-		v2.X = v2.Y = -1;
-		for (is = a->info.i_shp_first; is != NULL; is = is->next) {    // an arc may contain several polylines
-			if (shpObject != NULL)
-			{
-				free(shpObject);
-				shpObject = NULL;
-			}
-			shpObject = SHPReadObject(shpHandle, (int)is->index);
-			if (shpObject == NULL)
-			{
-				snprintf(buf, sizeof(buf), "Allocation failed...");
-				error.fatal(buf, __FUNCTION__);
-				return(-1);
-			}
-			// scan a polyline
-			for (int ip = 0; ip < shpObject->nParts; ip++){
-				// a polyline may contain parts
+    shpHandle = SHPOpen(Ist->networkFileName, "rb");
+    if (shpHandle == NULL){
+            snprintf(buf, sizeof(buf), "Error opening  SHP file %s\n", Ist->networkFileName);
+            error.fatal(buf, __FUNCTION__);
+            return -1;
+    }
+    // get general file info
+    SHPGetInfo(shpHandle, &numElements, &shpType, padfMinBound, padfMaxBound);
+    if (shpType != 3){
+            snprintf(buf, sizeof(buf), " - wrong shpfile type %d, mut be 3", shpType);
+            error.fatal(buf, __FUNCTION__);
+            return -1;
+    }
+    // Open file
+    snprintf(buf, sizeof(buf), "%s//%s_Waypoint.csv", OUTPUTDIR, Instance);
+    fout.open(buf, ios::out);
+    if (!fout.is_open())
+    {
+            snprintf(buf, sizeof(buf), "File cannot be opened %s", buf);
+            error.fatal(buf, __FUNCTION__);
+            return(-1);
+    }
+    // write headings
+    // We remove it because CSV2DB does not manage the header
+    //CSV_writeWaypointsHeader(&fout);
+    //
+    // first stop
+    i_stop = 0;
+    /*CSV_writeWaypointsFirstArc(shpHandle, &fout, &WaypointId, SolutionId, VehicleId, &PointOrder, RoutePointId, RouteId, &v_lastWritten, mySHP, Ist);
+    // next  stops 
+    i_stop++;
+    if (i_stop >= Ist->TRoute.nstop)   // all stops written 
+            goto terminate;
+    *///    
+    if (Ist->TRoute.v_stop_out[i_stop].StopOrPark == 0) // Stop Point
+            v_stop = Ist->v_Points[Ist->v_StopPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
+    else // parking point
+            v_stop = Ist->v_Points[Ist->v_ParkingPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
+    //
+    bool FlagFirstStopDone = false;
+    for (i_arc = 0; i_arc < Ist->TRoute.RArcs.npoints; i_arc++) {
+        //
+        if (Ist->TRoute.RArcs.arc[i_arc] < 0) continue;
+        k_arc = Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[i_arc]].original_Arc;
+        if (k_arc < 0) // dummy arc
+                continue;
+        a = &(Ist->v_SHP_Arcs_List[k_arc]);     // a is the 'oiginal' arc
+        //
+        v2.X = v2.Y = -1;
+        for (is = a->info.i_shp_first; is != NULL; is = is->next) {    // an arc may contain several polylines
+            //
+            shpObject = SHPReadObject(shpHandle, (int)is->index);
+            if (shpObject == NULL)
+            {
+                    snprintf(buf, sizeof(buf), "Allocation failed...");
+                    error.fatal(buf, __FUNCTION__);
+                    return(-1);
+            }
+            // scan a polyline
+            for (int ip = 0; ip < shpObject->nParts; ip++){
+                // a polyline may contain parts
 
-				// trick: i use the same block of instructions to evaluate poylines to be considered in the 
-				//        forward or revers direction            
-				int first, last, i_v1, last_j;
-				first = shpObject->panPartStart[ip];
-				if (ip < shpObject->nParts - 1)  last = shpObject->panPartStart[ip + 1] - 1;
-				else                             last = shpObject->nVertices - 1;
-				if (is->direction == 1) {
-					i_v1 = first;
-					last_j = last;
-				}
-				else{
-					i_v1 = last;
-					last_j = first;
-				}
-				for (int j = i_v1 + is->direction;; j += is->direction) {
-					// check part i: it may contain several segments
-					int i_v2 = j;
-					//
-					if (i_v1 != i_v2){
-						//  v1-v2 is a proper segment
-						v1.X = shpObject->padfX[i_v1];  v1.Y = shpObject->padfY[i_v1];   // starting point of the segment
-						v2.X = shpObject->padfX[i_v2];  v2.Y = shpObject->padfY[i_v2]; // ending point of the segment
-						//if (Ist->TRoute.v_stop_out[i_stop].indexArc != i_arc || !mySHP->SHP_isPointOnSegment(v_stop, v1, v2)){
-						if (Ist->TRoute.v_stop_out[i_stop].indexArc != i_arc || !mySHP->SHP_isPointOnSegmentMio(v_stop.X, v_stop.Y, v1.X, v1.Y, v2.X, v2.Y)){
-							//
-							// the stop is not on this arc 
-							// ** OR **
-							// it is on the arc but not on the segment : write the first vertex of the segment
-							//
-							if (!mySHP->SHP_PointsCoincide(v_lastWritten, v1)) {
-								// write v
-								CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v1, a->info.id);
-								WaypointId++; v_lastWritten = v1; //PointOrder++;
-							}
-							if (!mySHP->SHP_PointsCoincide(v_lastWritten, v2)) {
-								// write v
-								CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v2, a->info.id);
-								WaypointId++; v_lastWritten = v2; //PointOrder++; 
-							}
-						}
-						else{
-							//
-							// the stop is on this segment
-							//
-							if (!mySHP->SHP_PointsCoincide(v1, v_stop)) {
-								// write v
-								if (!mySHP->SHP_PointsCoincide(v_lastWritten, v1)) {
-									CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v1, a->info.id);
-									WaypointId++; v_lastWritten = v1; //PointOrder++;  
-								}
-							}
-							do {
-								// write the stop
-								PointOrder++; RoutePointId++;
-								CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, RoutePointId, RouteId, v_stop, a->info.id);
-								WaypointId++; v_lastWritten = v_stop;
-								i_stop++;
-								if (i_stop >= Ist->TRoute.nstop)   // all stops written 
-									goto terminate;
-								// next stop
-								if (Ist->TRoute.v_stop_out[i_stop].StopOrPark == 0) // Stop Point
-									v_stop = Ist->v_Points[Ist->v_StopPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
-								else // parking point
-									v_stop = Ist->v_Points[Ist->v_ParkingPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
-							} while (mySHP->SHP_isPointOnSegmentMio(v_stop.X, v_stop.Y, v1.X, v1.Y, v2.X, v2.Y));
-							//while (mySHP->SHP_isPointOnSegment(v_stop, v1, v2));
-							// i_stop is not on segment (v1,v2)
-							if (!mySHP->SHP_PointsCoincide(v_lastWritten, v2)) {
-								CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v2, a->info.id);
-								WaypointId++; v_lastWritten = v2;  // PointOrder++; 
-							}
-						} // end if (isOnSegment)
-					}// if i_v1 != i_v2
-					v1 = v2; i_v1 = i_v2;
-					if (j == last_j) break; // this is the only exit of the for (j)                  
-				} //for j
-			}// ip
-		}// for is
-	}// for i_arc
+                // trick: i use the same block of instructions to evaluate poylines to be considered in the 
+                //        forward or revers direction            
+                int first, last, i_v1, last_j;
+                first = shpObject->panPartStart[ip];
+                if (ip < shpObject->nParts - 1)  last = shpObject->panPartStart[ip + 1] - 1;
+                else                             last = shpObject->nVertices - 1;
+                if (is->direction == 1) {
+                        i_v1 = first;
+                        last_j = last;
+                }
+                else{
+                        i_v1 = last;
+                        last_j = first;
+                }
+                for (int j = i_v1 + is->direction;; j += is->direction) {
+                    // check part i: it may contain several segments
+                    int i_v2 = j;
+                    //
+                    if (i_v1 != i_v2){
+                        //  v1-v2 is a proper segment
+                        v1.X = shpObject->padfX[i_v1];  v1.Y = shpObject->padfY[i_v1];   // starting point of the segment
+                        v2.X = shpObject->padfX[i_v2];  v2.Y = shpObject->padfY[i_v2]; // ending point of the segment
+                        //if (Ist->TRoute.v_stop_out[i_stop].indexArc != i_arc || !mySHP->SHP_isPointOnSegment(v_stop, v1, v2)){
+                        if (Ist->TRoute.v_stop_out[i_stop].indexArc != i_arc || !mySHP->SHP_isPointOnSegmentMio(v_stop.X, v_stop.Y, v1.X, v1.Y, v2.X, v2.Y)){
+                            //
+                            // the stop is not on this arc 
+                            // ** OR **
+                            // it is on the arc but not on the segment : write the first vertex of the segment
+                            //
+                            if (FlagFirstStopDone) { // if the first stop has not been printed do not print thi segment
+                                if (!mySHP->SHP_PointsCoincide(v_lastWritten, v1)) {
+                                        // write v
+                                        CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v1, a->info.id);
+                                        WaypointId++; v_lastWritten = v1; //PointOrder++;
+                                }
+                                if (!mySHP->SHP_PointsCoincide(v_lastWritten, v2)) {
+                                        // write v
+                                        CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v2, a->info.id);
+                                        WaypointId++; v_lastWritten = v2; //PointOrder++; 
+                                }
+                            }
+                        }else{
+                            //
+                            // the stop is on this segment
+                            //
+                            if (FlagFirstStopDone &&  !mySHP->SHP_PointsCoincide(v1, v_stop)) {
+                                    // write v
+                                    if (!mySHP->SHP_PointsCoincide(v_lastWritten, v1)) {
+                                            CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v1, a->info.id);
+                                            WaypointId++; v_lastWritten = v1; //PointOrder++;  
+                                    }
+                            }
+                            do {
+                                    // write the stop
+                                    FlagFirstStopDone = true;
+                                    PointOrder++; RoutePointId++;
+                                    CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, RoutePointId, RouteId, v_stop, a->info.id);
+                                    WaypointId++; v_lastWritten = v_stop;
+                                    i_stop++;
+                                    if (i_stop >= Ist->TRoute.nstop)   // all stops written 
+                                            goto terminate;
+                                    // next stop
+                                    if (Ist->TRoute.v_stop_out[i_stop].StopOrPark == 0) // Stop Point
+                                            v_stop = Ist->v_Points[Ist->v_StopPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
+                                    else // parking point
+                                            v_stop = Ist->v_Points[Ist->v_ParkingPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
+                            } while (mySHP->SHP_isPointOnSegmentMio(v_stop.X, v_stop.Y, v1.X, v1.Y, v2.X, v2.Y));
+                            //while (mySHP->SHP_isPointOnSegment(v_stop, v1, v2));
+                            // i_stop is not on segment (v1,v2)
+                            if (!mySHP->SHP_PointsCoincide(v_lastWritten, v2)) {
+                                    CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v2, a->info.id);
+                                    WaypointId++; v_lastWritten = v2;  // PointOrder++; 
+                            }
+                        } // end if (isOnSegment)
+                    }// if i_v1 != i_v2
+                    v1 = v2; i_v1 = i_v2;
+                    if (j == last_j) break; // this is the only exit of the for (j)                  
+                } //for j
+            }// ip
+            SHPDestroyObject(shpObject);//if (shpObject != NULL) { delete[] shpObject;  shpObject = NULL;}
+        }// for is
+    }// for i_arc
 
 terminate:
 
-	// Free memory
-	if (shpObject != NULL)
-	{
-		free(shpObject);
-		shpObject = NULL;
-	}
+    // Free memory
+    if (shpObject != NULL)
+    {
+            free(shpObject);
+            shpObject = NULL;
+    }
 
-	// Close files
-	fout.close();
-	SHPClose(shpHandle);
+    // Close files
+    fout.close();
+    SHPClose(shpHandle);
 
-	return 0;
+    return 0;
 }
 
 void C_CSV::CSV_writeWaypointsHeader(ofstream *fout){
@@ -241,7 +241,7 @@ int C_CSV::CSV_writeWaypointsFirstArc(SHPHandle shpHandle, ofstream *fout, int *
 		p = Ist->v_Points[Ist->v_ParkingPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
 	// write the stop
 	k_arc = Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[0]].original_Arc;
-	if (Ist->TRoute.v_stop_out[i_stop].indexArc == 0 && k_arc >= 0) {
+	if ( k_arc >= 0) {
 		// the stop is on arc 0 and it is a true arc
 		a = &(Ist->v_SHP_Arcs_List[k_arc]);
 		CSV_writeWaypointsRow(fout, *WaypointId, Ist->SessionID, SolutionId, VehicleId, *PointOrder, RoutePointId, RouteId, p, a->info.id);
@@ -271,7 +271,7 @@ int C_CSV::CSV_writeWaypointsFirstArc(SHPHandle shpHandle, ofstream *fout, int *
 		}
 
 		// scan a polyline
-		for (i = 0; i < shpObject->nVertices - 1; i++) {                 // a polyline may contain several segments
+		for (i = 0; i < shpObject->nVertices - 1; i++) {                 // a polyline may contain several segments                 
 			// check part i
 			v.X = shpObject->padfX[i];   v.Y = shpObject->padfY[i];   // starting point of the segment
 			w.X = shpObject->padfX[i + 1]; w.Y = shpObject->padfY[i + 1]; // ending point of the segment

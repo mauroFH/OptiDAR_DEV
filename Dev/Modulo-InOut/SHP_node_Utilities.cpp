@@ -175,6 +175,7 @@ double C_SHP::SHPdistancePointPolyline(SHPHandle  shpHandle, DBFHandle dbfHandle
 			if (j == last_j) break; // this is the only exit of the for (j)
 		}
 	}// for ip 
+        SHPDestroyObject(shpObject);
 	// NB the sum of the geometrical lengths of the parts  can be different from the lenght stored in the DB
 	if (*l_offset > is->length) *l_offset = is->length;
 	return min_distance;
