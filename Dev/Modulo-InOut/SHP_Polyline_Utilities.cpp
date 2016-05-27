@@ -22,8 +22,6 @@ void C_SHP::clear(){};
  */
 int C_SHP::SHP_readAndBuildLines(char *filename, C_IST *Ist){
 
-	char NomeProc[] = "C_SHP::SHPreadAndBuildLines";
-
 	SHPHandle  shpHandle;
 	DBFHandle  dbfHandle;
 	//CError error;
@@ -57,8 +55,6 @@ int C_SHP::SHP_readAndBuildLines(char *filename, C_IST *Ist){
  * @param shpNumArcs number of directed polylines in the shape file
  */
 int C_SHP::SHP_allocateFullLines(int shpNumArcs, C_IST *Ist){
-	char NomeProc[] = "C_SHP::SHPallocateFullLines";
-	//CError error;
 	char buf[100];
 
 	Ist->v_SHP_Vertices_List = new XYPoint_STR[shpNumArcs * 2];
@@ -91,7 +87,6 @@ int C_SHP::SHP_allocateFullLines(int shpNumArcs, C_IST *Ist){
  *  @param *shpNumArcs      : output number of arcs obtained by considering two arcs for the bidirectional polylines (streets)
  */
 double C_SHP::SHP_myopen(char *filename, SHPHandle  *shpHandle, DBFHandle  *dbfHandle, int *shpType, int *numElements, int *shpNumArcs, C_IST *Ist){
-	char   NomeProc[] = "C_SHP::SHP_open";
 	char   buf[250];
 	double padfMinBound[4], padfMaxBound[4]; // not reported in output
 	//CError error;
@@ -129,7 +124,6 @@ double C_SHP::SHP_myopen(char *filename, SHPHandle  *shpHandle, DBFHandle  *dbfH
  * @return 1 = forward; -1 = backward; 0 = both directions; 99 = no transit 
  */
 int C_SHP::SHPattributeDirection(DBFHandle dbfHandle, int numElem){
-	char   NomeProc[] = "C_SHP::SHPattributeDirection";
 	int idOneway;
 	char field[3], buf[100];
 	//CError error;
@@ -155,7 +149,6 @@ int C_SHP::SHPattributeDirection(DBFHandle dbfHandle, int numElem){
  * @return the attribute METERS
  */
 double C_SHP::SHPattributeMeters(DBFHandle dbfHandle, int numElem){
-	char   NomeProc[] = "C_SHP::SHPattributeMeters";
 	int id;
 	double meters;
 	id = DBFGetFieldIndex(dbfHandle, "METERS");
@@ -172,7 +165,6 @@ double C_SHP::SHPattributeMeters(DBFHandle dbfHandle, int numElem){
  * @return the attribute "speed"
  */
 int C_SHP::SHPattributeSpeed(DBFHandle dbfHandle, int numElem){
-	char   NomeProc[] = "C_SHP::SHPattributeSpeed";
 	int id;
 	int  speed;
 	id = DBFGetFieldIndex(dbfHandle, "KPH");
@@ -208,7 +200,6 @@ long long C_SHP::SHPattributeNoturn(DBFHandle dbfHandle, int numElem, int index)
  * @return the attribute "speed"
  */
 long long C_SHP::SHPattributeId(DBFHandle dbfHandle, int numElem){
-	char   NomeProc[] = "C_SHP::SHPattributeId";
 	int i;
 	long long  fid;
 	//double dfid;
@@ -229,7 +220,6 @@ long long C_SHP::SHPattributeId(DBFHandle dbfHandle, int numElem){
  * @return the attribute "speed"
  */
 long long C_SHP::SHPattributeFid(DBFHandle dbfHandle, int numElem){
-	char   NomeProc[] = "C_SHP::SHPattributeFid";
 	int id;
 	long long  fid;
 	id = DBFGetFieldIndex(dbfHandle, "FID");
@@ -248,7 +238,6 @@ long long C_SHP::SHPattributeFid(DBFHandle dbfHandle, int numElem){
  * @return 
  */
 int C_SHP::SHPreadAndStoreAttributes(DBFHandle dbfHandle, int i_SHP_Elem, int i_SHP_Arc, C_IST *Ist){
-	char   NomeProc[] = "C_SHP::SHPreadAndStoreAttributes";
 
 	long long id = C_SHP::SHPattributeId(dbfHandle, i_SHP_Elem);
 	int meters = (int)C_SHP::SHPattributeMeters(dbfHandle, i_SHP_Elem);  // Marco:Apr2016 (cast)
@@ -290,7 +279,6 @@ int C_SHP::SHPreadAndStoreAttributes(DBFHandle dbfHandle, int i_SHP_Elem, int i_
  * @return 
  */
 int C_SHP::SHP_readPolyline(SHPHandle  shpHandle, DBFHandle  dbfHandle, C_IST *Ist){
-	char   NomeProc[] = " C_SHP::readSHPpolyline";
 	char   buf[250];
 	double padfMinBound[4], padfMaxBound[4]; // dummy
 	int i, shpType, numElements, nv, na;
@@ -310,12 +298,12 @@ int C_SHP::SHP_readPolyline(SHPHandle  shpHandle, DBFHandle  dbfHandle, C_IST *I
 		if (dir == 99) continue; // street with no traffic flow
 		// the Obj type is a polyline (id = 3))
 		shpObject = SHPReadObject(shpHandle, i);
-		if (dir != 0 && nv + 1 >= SHP_num_Vertices_Dim || dir == 0 && nv + 3 >= SHP_num_Vertices_Dim){
+		if ((dir != 0 && nv + 1 >= SHP_num_Vertices_Dim) || (dir == 0 && nv + 3 >= SHP_num_Vertices_Dim)){
 			snprintf(buf, sizeof(buf), " - too much vertices reading element  %d ", i);
 			error.fatal(buf, __FUNCTION__);
 			return -1;
 		}
-		if (dir != 0 && na >= SHP_num_Arcs_Dim || dir == 0 && na + 1 >= SHP_num_Arcs_Dim){
+		if ((dir != 0 && na >= SHP_num_Arcs_Dim) || (dir == 0 && na + 1 >= SHP_num_Arcs_Dim)){
 			snprintf(buf, sizeof(buf), " - too much arcs reading element  %d ", i);
 			error.fatal(buf, __FUNCTION__);
 			return -1;
@@ -378,7 +366,6 @@ int C_SHP::SHP_readPolyline(SHPHandle  shpHandle, DBFHandle  dbfHandle, C_IST *I
  * @return 
  */
 int C_SHP::SHP_shrinkNearVertices(C_IST *Ist){
-	char   NomeProc[] = "C_SHP::SHPshrinkNearVertices";
 	//CError error;
 
 	int *v_sorted_vertices, *v_equal_vertex, i, j, nv;
@@ -461,7 +448,6 @@ int C_SHP::SHP_shrinkNearVertices(C_IST *Ist){
 }
 
 int C_SHP::SHPcleanLoops(C_IST *Ist){
-	char   NomeProc[] = "C_SHP::SHPcleanLoops";
 	// delete loops
 	for (int k = 0; k < Ist->SHP_num_Arcs; k++) {
 		if (Ist->v_SHP_Arcs_List[k].from == Ist->v_SHP_Arcs_List[k].to){
@@ -476,8 +462,6 @@ int C_SHP::SHPcleanLoops(C_IST *Ist){
  * 
  */
 int C_SHP::SHPcleanMultipleArcs(C_IST *Ist){
-	char   NomeProc[] = "C_SHP::SHPcleanMultipleArcs";
-	//CError error;
 
 	int i, k;
 	int *v_first_FS; /// vertex pointers in the forward star
@@ -518,13 +502,15 @@ int C_SHP::SHPcleanMultipleArcs(C_IST *Ist){
 	for (i = 0; i < Ist->SHP_num_Vertices; i++) {
 		for (int h = v_first_FS[i]; h < v_first_FS[i + 1]; h++)
 			for (int k = h + 1; k < v_first_FS[i + 1]; k++) {
-				if (Ist->v_SHP_Arcs_List[v_arcs_FS[h]].to == Ist->v_SHP_Arcs_List[v_arcs_FS[k]].to)
+				if (Ist->v_SHP_Arcs_List[v_arcs_FS[h]].to == Ist->v_SHP_Arcs_List[v_arcs_FS[k]].to) {
 					// **** IMPORTANT ***
 					// multiple arcs: delete the slowest one ... other criteria can be adopted
-					if (Ist->v_SHP_Arcs_List[v_arcs_FS[k]].info.minutes >= Ist->v_SHP_Arcs_List[v_arcs_FS[h]].info.minutes)
+					if (Ist->v_SHP_Arcs_List[v_arcs_FS[k]].info.minutes >= Ist->v_SHP_Arcs_List[v_arcs_FS[h]].info.minutes){
 						Ist->v_SHP_Arcs_List[v_arcs_FS[k]].from = -1; // mark as deleted 
-					else
+					}else{
 						Ist->v_SHP_Arcs_List[v_arcs_FS[h]].from = -1; // mark as deleted    
+                                        }
+                                }
 			}
 	}
 
@@ -568,7 +554,6 @@ int C_SHP::SHPcleanMultipleArcs(C_IST *Ist){
  * @return 1 = forbidden 0 otherwise
  */
 int C_SHP::SHPturnForbidden(Arc_STR *a1, Arc_STR *a2){
-	char   NomeProc[] = "C_SHP::SHPturnForbidden";
 
 	IShape_STR *is;
 
@@ -588,7 +573,6 @@ int C_SHP::SHPturnForbidden(Arc_STR *a1, Arc_STR *a2){
  * @return 
  */
 int C_SHP::SHPconnectArcs(Arc_STR *a1, Arc_STR *a2){
-	char   NomeProc[] = "C_SHP::SHPconnectArcs";
 	a1->info.length += a2->info.length;
 	a1->info.minutes += a2->info.minutes;
 	a1->to = a2->to;
@@ -600,7 +584,6 @@ int C_SHP::SHPconnectArcs(Arc_STR *a1, Arc_STR *a2){
 }
 
 int C_SHP::SHPaddIShape(Arc_STR *a1, Arc_STR *a2){
-	char   NomeProc[] = "C_SHP::SHPaddIShape";
 	IShape_STR *p1_is, *p2_is;
 	p2_is = a2->info.i_shp_first;
 	if (p2_is == NULL) return 0;
@@ -623,7 +606,6 @@ int C_SHP::SHPaddIShape(Arc_STR *a1, Arc_STR *a2){
  * @return 0 or < 0 if an error occurs
  */
 int C_SHP::SHP_cleanDegreeZeroAndTwo(C_IST *Ist){
-	char   NomeProc[] = "C_SHP::SHPcleanDegreeZeroAndTwo";
 	int i_ret;
 	do {
 		i_ret = SHPcleanDegreeZeroAndTwo_function(Ist);
@@ -637,7 +619,6 @@ int C_SHP::SHP_cleanDegreeZeroAndTwo(C_IST *Ist){
  * @return 1 if some vertex have beeen removed, 0 if no vertex have been removed, -1 if an error occurs
  */
 int C_SHP::SHPcleanDegreeZeroAndTwo_function(C_IST *Ist){
-	char   NomeProc[] = "C_SHP::SHPcleanDegreeZeroAndTwo_function";
 	int *v_num_in;  /// v_num_in[i] = number of arcs entering  vertex i
 	int *v_num_out; /// v_num_out[i] = number of arcs exiting  vertex i
 	int *v_first_in;  /// v_first_in[i] = index of the first arc entering  vertex i
@@ -692,7 +673,6 @@ int C_SHP::SHPcleanDegreeZeroAndTwo_function(C_IST *Ist){
 	// looks for leaves (a single arc entering or exiting)
 	for (i = 0; i < Ist->SHP_num_Vertices; i++){
 		if (v_num_in[i] == 1 && v_num_out[i] == 0){
-			int ii = Ist->v_SHP_Arcs_List[v_first_in[i]].info.i_shp_first->index;
 			snprintf(buf, sizeof(buf), "isolated arc in Vertex=%d Arc=#%ld %d %d from %f %f  to %f %f", i, Ist->v_SHP_Arcs_List[v_first_in[i]].info.i_shp_first->index,
 				Ist->v_SHP_Arcs_List[v_first_in[i]].from, Ist->v_SHP_Arcs_List[v_first_in[i]].to,
 				Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_in[i]].from].X,
@@ -849,7 +829,7 @@ int C_SHP::SHPcleanDegreeZeroAndTwo_function(C_IST *Ist){
  * 
  */
 int C_SHP::SHPsplit2Loops(C_IST *Ist){
-	int i, j, ia, ia2, jp;
+	int i, j, ia, ia2;
 	//CError error;
 
 	for (ia = 0; ia < Ist->SHP_num_Arcs - 1; ia++){
@@ -865,9 +845,6 @@ int C_SHP::SHPsplit2Loops(C_IST *Ist){
 			}
 			// i prime
 			Ist->v_SHP_Vertices_List[Ist->SHP_num_Vertices] = Ist->v_SHP_Vertices_List[j];
-			jp = (Ist->SHP_num_Vertices)++;
-
-
 		}
 	}
 	return 0;
@@ -895,11 +872,11 @@ void C_SHP::quickSortVertices(int *LIST, int left_index, int right_index, double
 		pivY = Ist->v_SHP_Vertices_List[LIST[(l + r) >> 1]].Y;
 		do{
 			while ((type * (Ist->v_SHP_Vertices_List[LIST[i]].X - pivX) > CON_EPS ||
-				fabs(Ist->v_SHP_Vertices_List[LIST[i]].X - pivX) < CON_EPS &&
-				type *(Ist->v_SHP_Vertices_List[LIST[i]].Y - pivY) > CON_EPS) && i < r) i++;
+				(fabs(Ist->v_SHP_Vertices_List[LIST[i]].X - pivX) < CON_EPS &&
+				type *(Ist->v_SHP_Vertices_List[LIST[i]].Y - pivY) > CON_EPS) )&& i < r) i++;
 			while ((type * (Ist->v_SHP_Vertices_List[LIST[j]].X - pivX) < -CON_EPS ||
-				fabs(Ist->v_SHP_Vertices_List[LIST[j]].X - pivX) < CON_EPS &&
-				type*(Ist->v_SHP_Vertices_List[LIST[j]].Y - pivY) < -CON_EPS) && j > l) j--;
+				(fabs(Ist->v_SHP_Vertices_List[LIST[j]].X - pivX) < CON_EPS &&
+				type*(Ist->v_SHP_Vertices_List[LIST[j]].Y - pivY) < -CON_EPS)) && j > l) j--;
 			if (i < j) SWAP(LIST[i], LIST[j], int);
 			if (i <= j){ i++; j--; }
 		} while (i <= j);
@@ -998,7 +975,6 @@ int C_SHP::SHP_writeShapeFromPath(char *Instance, long narcs, long *arc, int  *i
  * @param filename input name of the file without extension
  */
 int C_SHP::SHP_Copy(char *filename){
-	char   NomeProc[] = "SHP_Copy";
 	SHPHandle  shpHandle, shpHandleW;
 	SHPObject *shpObject;
 	DBFHandle  dbfHandle, dbfHandleW;
@@ -1032,13 +1008,11 @@ int C_SHP::SHP_Copy(char *filename){
 	// get general file info
 	SHPGetInfo(shpHandle, &numElements, &shpType, padfMinBound, padfMaxBound);
 	//
-	int x;
 	char record[500];
 	const char *cc; cc = &record[0];
 	int n_rec = 0;
 	for (int i = 0; i < numElements; i++){
 		shpObject = SHPReadObject(shpHandle, i);
-		x = SHPWriteObject(shpHandleW, -1, shpObject);
 		cc = DBFReadTuple(dbfHandle, i);
 		DBFWriteTuple(dbfHandleW, n_rec++, (void *)cc);
                 SHPDestroyObject(shpObject);

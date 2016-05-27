@@ -347,14 +347,12 @@ void C_CSV::CVS_writePath(C_SHP *mySHP, C_IST *Ist, char *Instance) {
 * @return
 */
 void C_CSV::CVS_writeRoute(C_IST *Ist, char *Instance){
-	int i;
 	ofstream fout;
 	//CError error;
 	int RouteId = Ist->RouteID;
 	int SolutionId = Ist->SolutionID;
 	int VehicleId = Ist->v_Vehicles[Ist->TRoute.VehicleID].VehicleId;
 	int RouteNumber = 1;
-	int PointOrder = 1;
 
 	// Open file
 	snprintf(buf, sizeof(buf), "%s//%s_Route.csv", OUTPUTDIR, Instance);
@@ -370,7 +368,6 @@ void C_CSV::CVS_writeRoute(C_IST *Ist, char *Instance){
 	//fout  << "RouteId" << SEP << "SolutionId" << SEP <<  "RouteNumber" << SEP << "Vehicleid" << "\n"  ;
 	//(fout).flush();
 
-	long LastDistance = 0;
 	//
 	// Route ID
 	fout << RouteId << SEP;
@@ -398,7 +395,6 @@ void C_CSV::CVS_writeRoutePoint(C_IST *Ist, char *Instance){
 	int RouteId = Ist->RouteID;
 	int RoutePointId = RouteId * CON_MAXSTOPSROUTE + 1;
 	int SolutionId = Ist->SolutionID;
-	int VehicleId = Ist->TRoute.VehicleID;
 	int PointOrder = 1;
 
 	// Open file
@@ -684,10 +680,6 @@ void C_CSV::CVS_writeRequestInRoute(C_IST *Ist, char *Instance){
 void C_CSV::CVS_writeSolution(C_IST *Ist, char *Instance){
 	//int i;
 	ofstream fout;
-	//CError error;
-	int SolutionId = Ist->SolutionID;
-	int SessionId = Ist->SessionID;
-	int SolutionNum = Ist->SolutionNum;
 
 	// Open file
 	snprintf(buf, sizeof(buf), "%s//%s_Solution.csv", OUTPUTDIR, Instance);

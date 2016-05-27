@@ -10,7 +10,6 @@
  * @return 
  */
 int C_SHP::SHP_buildFS(C_IST *Ist){
-	char   NomeProc[] = "C_SHP::SHPbuildFS";
 	/** computes number of arcs entering  (#in) and outgoing (#out) from each vertex i
 	 * compute the list of arcs entering end exiting from each vertex.
 	 * Each vertex i is expanded in #in + #out vertices (let us call in-vettices and out-vertices) and
@@ -131,7 +130,6 @@ int C_SHP::SHP_buildFS(C_IST *Ist){
  * @param a2 input second arc
  */
 int C_SHP::SHPsameShape(Arc_STR *a1, Arc_STR *a2){
-	char   NomeProc[] = "C_SHP::SHPsameShape";
 	IShape_STR *is1, *is2;
 	for (is1 = a1->info.i_shp_first; is1 != NULL; is1 = is1->next)
 		for (is2 = a2->info.i_shp_first; is2 != NULL; is2 = is2->next)
@@ -151,7 +149,6 @@ int C_SHP::SHPsameShape(Arc_STR *a1, Arc_STR *a2){
  */
 int C_SHP::SHPbuildInOutLists(int *v_first_in, int *v_first_out, int *v_next_in, int *v_next_out, int *v_num_in, int *v_num_out,
 	C_IST *Ist){
-	char   NomeProc[] = "C_SHP::SHPbuildInOutLists";
 	/*
 	*/
 	int i, j, k;
