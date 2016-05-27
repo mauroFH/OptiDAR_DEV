@@ -176,7 +176,6 @@ int C_CSV::CSV_getWord(int numRec, int *numFields, unsigned char **p, unsigned c
 int C_CSV::CSVnonIntero(unsigned char *w)
 {
 	int i = 0;
-	char *NomeProc = (char *)   "CSV_NNONINTERO";
 
 	while (w[i] == CON_BLANK) i++;
 	if (w[i] == '-') i++;
@@ -214,15 +213,18 @@ int C_CSV::CSVnonInteroNull(unsigned char *w)
 */
 int C_CSV::CSVnonReale(unsigned char *w)
 {
-    char *NomeProc = (char *)   "CSV_NonEReale";
     int i=0,FLAGDEC = 0, PosSepDec = -1 ;
 
     while (w[i] == CON_BLANK ) i++;
     if (!isdigit(w[i]) && w[i] != CON_SEPDECIMAL) return(true);
     for(;;i++)
-        if ( !isdigit(w[i]) )
-            if ( w[i] == CON_SEPDECIMAL ) { FLAGDEC++; PosSepDec = i; }
-			else break;
+        if ( !isdigit(w[i]) ) {
+            if ( w[i] == CON_SEPDECIMAL ) { 
+                FLAGDEC++; PosSepDec = i; 
+            }else{ 
+                break;
+            }
+        }
 
     while (w[i] == CON_BLANK ) i++;
     if ( w[i] != '\0') return(true);
