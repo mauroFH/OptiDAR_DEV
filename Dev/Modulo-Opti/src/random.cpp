@@ -29,14 +29,11 @@ float f_random()
 void f_seedran(int k)
 {
 	int			i;
-	static int	seed;
-	float			x;
 
-	seed = 0;
 	if (k <= 0)
 		return;
 	for (i=0; i<k; i++)
-		x = f_random();
+		f_random();
 }
 
 /**

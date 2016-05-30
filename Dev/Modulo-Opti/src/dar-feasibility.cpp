@@ -42,7 +42,7 @@ bool CDar::feasibility_tw(CRoute &route, constraint_type &constraint)
 {
 	int p_node, p_pred, p_pickup;
 	CNode *ptr_node, *ptr_pred, *ptr_pickup, *ptr_next;
-	int i_node, i_vehicle, i_node_pred, i_node_pickup, i_node_next, p_next;
+	int i_node, i_vehicle, i_node_pred, i_node_next, p_next;
 	int travel_time, service_time, e_time, l_time;
 	float distance, cost, next_distance;
 	int delta;
@@ -107,7 +107,7 @@ bool CDar::feasibility_tw(CRoute &route, constraint_type &constraint)
 			// Node corredponsind to the delivery
 			p_pickup			= ptr_node->p_request;
 			ptr_pickup		= &(route.v_nodes[p_pickup]);
-			i_node_pickup	= ptr_pickup->i_node;
+			//i_node_pickup	= ptr_pickup->i_node;
 			delta			= (ptr_node->a_time - ptr_pickup->d_time) - v_nodes[i_node].ride_time;
 			if (delta > 0){
 				constraint = RIDETIME;
@@ -148,7 +148,7 @@ bool CDar::feasibility_tw(CRoute &route, constraint_type &constraint)
 						// Node corredponsind to the delivery
 						p_pickup			= ptr_next->p_request;
 						ptr_pickup		= &(route.v_nodes[p_pickup]);
-						i_node_pickup	= ptr_pickup->i_node;
+						//i_node_pickup	= ptr_pickup->i_node;
 						delta			= (ptr_next->a_time - ptr_pickup->d_time) - v_nodes[i_node_next].ride_time;
 						if (delta > 0){
 							constraint = RIDETIME;
@@ -203,7 +203,7 @@ bool CDar::feasibility_cap(CRoute &route, constraint_type &constraint)
 {
 	int p_node, p_pred;
 	CNode *ptr_node, *ptr_pred;
-	int i, i_node, i_vehicle, i_node_pred, i_request;
+	int i, i_node, i_vehicle,  i_request;
 	bool feasible;
 
 	// Check if vehicle assigned
@@ -232,7 +232,7 @@ bool CDar::feasibility_cap(CRoute &route, constraint_type &constraint)
 			i_node		= ptr_node->i_node;// index of the node
 			p_pred		= ptr_node->p_pred;
 			ptr_pred		= &(route.v_nodes[p_pred]);
-			i_node_pred = ptr_pred->i_node;
+			//i_node_pred = ptr_pred->i_node;
 			i_request	= getrequest(i_node);
 			// Cunulative demand
 			if (i_request < 0){
@@ -270,7 +270,7 @@ bool CDar::feasibility_cap(CRoute &route, constraint_type &constraint)
 			i_node		= ptr_node->i_node;// index of the node
 			p_pred		= ptr_node->p_pred;
 			ptr_pred		= &(route.v_nodes[p_pred]);
-			i_node_pred = ptr_pred->i_node;
+			//i_node_pred = ptr_pred->i_node;
 			i_request	= getrequest(i_node);
 			if (i_request < 0){
 				// intermediate node
@@ -402,7 +402,7 @@ bool CDar::feasibility_wt(CRoute &route, constraint_type &constraint)
 {
 	int p_node, p_pred, p_next, p_delivery, p_pickup;
 	CNode *ptr_node, *ptr_pred, *ptr_next, *ptr_delivery, *ptr_pickup;
-	int i, i_node, i_vehicle, i_node_pred, i_node_delivery, i_node_pickup;
+	int i, i_node, i_vehicle, i_node_pred;
 	int travel_time, service_time, max_w_time, e_time, l_time;
 	int tot_w_time, i_node_next;
 	int delta;
@@ -488,7 +488,7 @@ bool CDar::feasibility_wt(CRoute &route, constraint_type &constraint)
 			// Node corredponsind to the pickup
 			p_delivery = ptr_node->p_request;
 			ptr_delivery = &(route.v_nodes[p_delivery]);
-			i_node_delivery = ptr_delivery->i_node;
+			//i_node_delivery = ptr_delivery->i_node;
 			delta = (ptr_delivery->d_time - ptr_node->d_time) - v_nodes[i_node].ride_time;
 			if (delta > tot_w_time){
 				constraint = RIDETIME;
@@ -542,15 +542,15 @@ bool CDar::feasibility_wt(CRoute &route, constraint_type &constraint)
 		// Check RIDE TIME
 		if (v_nodes[i_node].type == DELIVERY)
 		{
-			// Node corredponsind to the delivery
-			p_pickup = ptr_node->p_request;
-			ptr_pickup = &(route.v_nodes[p_pickup]);
-			i_node_pickup = ptr_pickup->i_node;
-			delta = (ptr_node->d_time - ptr_pickup->d_time) - v_nodes[i_node].ride_time;
-			if (delta > 0){
-				constraint = RIDETIME;
-				return false;
-			}
+                    // Node corredponsind to the delivery
+                    p_pickup = ptr_node->p_request;
+                    ptr_pickup = &(route.v_nodes[p_pickup]);
+                    //i_node_pickup = ptr_pickup->i_node;
+                    delta = (ptr_node->d_time - ptr_pickup->d_time) - v_nodes[i_node].ride_time;
+                    if (delta > 0){
+                        constraint = RIDETIME;
+                        return false;
+                    }
 		}
 		// Next node
 		p_node = ptr_node->p_next;

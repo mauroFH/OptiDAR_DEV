@@ -69,19 +69,19 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 
 		//////// node index
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not found", NomeProc, numRec, numFields);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not found", NomeProc, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
 		if (CSVnonIntero(word))	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not an integer = %s", NomeProc, numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not an integer = %s", NomeProc, numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
-		sscanf(word_dummy, "%d", &i);
+		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d negative = %d", NomeProc, numRec, numFields, i);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d negative = %ld", NomeProc, numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
@@ -94,7 +94,7 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 
 		//////// Code
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not found", NomeProc, numRec, numFields);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not found", NomeProc, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
@@ -102,7 +102,7 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 
 		//////// Type
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not found", NomeProc, numRec, numFields);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not found", NomeProc, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
@@ -135,19 +135,19 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 
 		//////// distance
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not found", NomeProc, numRec, numFields);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not found", NomeProc, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
 		if (CSVnonIntero(word))	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not an integer = %s", NomeProc, numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not an integer = %s", NomeProc, numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
-		sscanf(word_dummy, "%d", &i);
+		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d negative = %d", NomeProc, numRec, numFields, i);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d negative = %ld", NomeProc, numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
@@ -155,19 +155,19 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 
 		//////// time
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not found", NomeProc, numRec, numFields);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not found", NomeProc, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
 		if (CSVnonIntero(word))	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not an integer = %s", NomeProc, numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not an integer = %s", NomeProc, numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
-		sscanf(word_dummy, "%d", &i);
+		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d negative = %d", NomeProc, numRec, numFields, i);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d negative = %ld", NomeProc, numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
@@ -175,19 +175,19 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 
 		//////// seated
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not found", NomeProc, numRec, numFields);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not found", NomeProc, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
 		if (CSVnonIntero(word))	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not an integer = %s", NomeProc, numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not an integer = %s", NomeProc, numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
-		sscanf(word_dummy, "%d", &i);
+		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d negative = %d", NomeProc, numRec, numFields, i);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d negative = %ld", NomeProc, numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
@@ -195,19 +195,19 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 
 		//////// standing
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not found", NomeProc, numRec, numFields);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not found", NomeProc, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
 		if (CSVnonIntero(word))	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not an integer = %s", NomeProc, numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not an integer = %s", NomeProc, numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
-		sscanf(word_dummy, "%d", &i);
+		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d negative = %d", NomeProc, numRec, numFields, i);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d negative = %ld", NomeProc, numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
@@ -215,19 +215,19 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 
 		//////// disable
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not found", NomeProc, numRec, numFields);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not found", NomeProc, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
 		if (CSVnonIntero(word))	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not an integer = %s", NomeProc, numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not an integer = %s", NomeProc, numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
-		sscanf(word_dummy, "%d", &i);
+		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d negative = %d", NomeProc, numRec, numFields, i);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d negative = %ld", NomeProc, numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
@@ -235,19 +235,19 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 
 		//////// Arrival time
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not found", NomeProc, numRec, numFields);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not found", NomeProc, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
 		if (CSVnonIntero(word))	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not an integer = %s", NomeProc, numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not an integer = %s", NomeProc, numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
-		sscanf(word_dummy, "%d", &i);
+		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d negative = %d", NomeProc, numRec, numFields, i);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d negative = %ld", NomeProc, numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
@@ -255,19 +255,19 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 
 		//////// Departure time
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not found", NomeProc, numRec, numFields);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not found", NomeProc, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
 		if (CSVnonIntero(word))	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d not an integer = %s", NomeProc, numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d not an integer = %s", NomeProc, numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
-		sscanf(word_dummy, "%d", &i);
+		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
-			snprintf(buf, sizeof(buf), "Error: %s :  record = %d field %d negative = %d", NomeProc, numRec, numFields, i);
+			snprintf(buf, sizeof(buf), "Error: %s :  record = %ld field %d negative = %ld", NomeProc, numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
@@ -500,7 +500,6 @@ int C_CSV::CSV_CheckInputDataSize(C_IST *Ist)
 */
 int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 {
-	char *NomeProc = (char *) "CSV_writeOptiData";
 	long i, j;
 	long i1, j1;
 	long i2, j2;
@@ -568,7 +567,7 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 	}
 
 	// Write #request and #depots
-	fprintf(fin, "%d %c %d %c \n", Ist->num_Requests, SEP, ndep, SEP);
+	fprintf(fin, "%d %c %ld %c \n", Ist->num_Requests, SEP, ndep, SEP);
 
 	// Write vehicle data
 	int kk = CSV_AssignVehicle(Ist, &ivehicle, &ivehiclesched);
@@ -593,7 +592,7 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 	for (i = 0; i < Ist->num_Requests; i++)
 	{
 		// Code Number
-		fprintf(fin, "%d %c ", nreq, SEP);
+		fprintf(fin, "%ld %c ", nreq, SEP);
 
 		// Code
 		fprintf(fin, "%s %c ", Ist->v_Requests[i].Cod, SEP);
@@ -618,7 +617,7 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 
 		// Demand
 		// Temporary we read the first two (notice that we remove "type")
-		fprintf(fin, "%d %c ", (long)(Ist->v_Requests[i].LoadNormal), SEP);
+		fprintf(fin, "%ld %c ", (long)(Ist->v_Requests[i].LoadNormal), SEP);
 		//fprintf(fin, "%d %c ", (long)(Ist->v_requests[i].pickup.v_demands[1]), SEP);
 		fprintf(fin, " 0 ;");
 
@@ -641,7 +640,7 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 	for (i = 0; i < Ist->num_Requests; i++)
 	{
 		// Code Number
-		fprintf(fin, "%d %c ", nreq, SEP);
+		fprintf(fin, "%ld %c ", nreq, SEP);
 
 		// Code
 		fprintf(fin, "%s %c ", Ist->v_Requests[i].Cod, SEP);
@@ -693,7 +692,7 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 	for (i = 0; i < Ist->num_ParkingPoints; i++)
 	{
 		// Code Number
-		fprintf(fin, "%d %c ", nreq, SEP);
+		fprintf(fin, "%ld %c ", nreq, SEP);
 
 		// Code
 		fprintf(fin, "%s %c ", Ist->v_ParkingPoints[i].Cod, SEP);
@@ -846,8 +845,8 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 			}
 
 			// Row entry
-			fprintf(fin, "%d %c %d %c ", i, SEP, j, SEP);
-			fprintf(fin, "%d %c %d %c ", blength, SEP, btime, SEP);
+			fprintf(fin, "%ld %c %ld %c ", i, SEP, j, SEP);
+			fprintf(fin, "%ld %c %ld %c ", blength, SEP, btime, SEP);
 
 			// New line
 			fprintf(fin, "\n");

@@ -50,7 +50,6 @@ void CDar::out_solution(char *Instance)
 {
 	ofstream fout;
 	//CError error;
-	char sep = CON_CSVFILE_SEPARATOR;
 	int k;
 
 	if (!flg_instance_loaded)
@@ -546,7 +545,7 @@ void CDar::print_latex(CRoute &route, char *Instance)
 	double	cxmin, cxmax, cymin, cymax, rxo, ryo, ru, ro;
 	int		i, inode, i1, i2;
 	ofstream		fp;
-	int p_node, i_node, p_pred;
+	int p_node, p_pred;
 	CNode *ptr_node, *ptr_pred;
 
 	// Open the data file
@@ -573,7 +572,7 @@ void CDar::print_latex(CRoute &route, char *Instance)
 	else
 		ro = ryo;
 	ru = 21. / (ro*1.4);
-	// .....................................................................
+	// ...................................................................
 	fp << "\\documentclass[]{amsart}" << endl;
 	fp << "\\usepackage{pst-all} %% From PSTricks" << endl;
 	fp << "\\usepackage{lscape}" << endl;
@@ -621,7 +620,6 @@ void CDar::print_latex(CRoute &route, char *Instance)
 		{
 			// Current node
 			ptr_node = &(route.v_nodes[p_node]);
-			i_node = ptr_node->i_node;// index of the node
 			if (p_pred != NIL)
 			{
 				ptr_pred = &(route.v_nodes[p_pred]);
@@ -653,17 +651,17 @@ END:;
 void CDar::print_latex_shp(CRoute &route, char *Instance)
 {
 	//CError error;
-	double	cxmin, cxmax, cymin, cymax, rxo, ryo, ru, ro;
+	double	cxmin, cxmax, cymin, cymax, rxo, ryo;
 	int		i, inode, i1, i2;
 	ofstream		fp;
-	int p_node, i_node, p_pred;
+	int p_node, p_pred;
 	CNode *ptr_node, *ptr_pred;
 
 	// Open the data file
 		snprintf(buf,sizeof(buf),"%s//%s_dar_shp.tex",OUTPUTDIR,Instance);        
 	fp.open(buf, ios::out);
 	if (!fp.is_open()){
-				snprintf(buf,sizeof(buf),"File opening %s",OUTPUTDIR,buf);            
+		snprintf(buf,sizeof(buf),"File opening %s//%s",OUTPUTDIR,buf);            
 		error.fatal(buf, __FUNCTION__);
 		goto END;
 	}
@@ -680,11 +678,7 @@ void CDar::print_latex_shp(CRoute &route, char *Instance)
 	cxmin = cxmin - rxo; 	cxmax = cxmax + rxo; 	cymin = cymin - ryo; 	cymax = cymax + ryo;
 	rxo = (cxmax - cxmin);
 	ryo = (cymax - cymin);
-	if (rxo > ryo) ro = rxo;
-	else
-		ro = ryo;
-	ru = 21. / (ro*1.4);
-	// .....................................................................
+	// ...................................................................
 	fp << "\\documentclass[]{amsart}" << endl;
 	fp << "\\usepackage{pst-all} %% From PSTricks" << endl;
 	fp << "\\usepackage{lscape}" << endl;
@@ -732,7 +726,6 @@ void CDar::print_latex_shp(CRoute &route, char *Instance)
 		{
 			// Current node
 			ptr_node = &(route.v_nodes[p_node]);
-			i_node = ptr_node->i_node;// index of the node
 			if (p_pred != NIL)
 			{
 				ptr_pred = &(route.v_nodes[p_pred]);

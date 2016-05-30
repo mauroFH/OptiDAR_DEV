@@ -1302,7 +1302,7 @@ int Dijkstra::Elabora(void)
 		{
 			codarc[k]=(unsigned short)tabkey[kd][kty];
 			if (codarc[k]<0)
-				printf("errr...%d\n",k);
+				printf("errr...%ld\n",k);
 		}	
 		else
 			for (i=MaxCod;i<MaxCod+ntab[kty];i++)
@@ -1310,7 +1310,7 @@ int Dijkstra::Elabora(void)
 				{
 					codarc[k]=(unsigned short)tabkey[i][kty];
 					if (codarc[k]<0)
-						printf("errr...%d\n",k);
+						printf("errr...%ld\n",k);
 					break;
 				}
 	}
@@ -1342,15 +1342,15 @@ int Dijkstra::UpdateTable(int TipoPer, int nVel, int *Vel)
 	// For each entry compute tempo and costo
 	for (k=0;k<nkey;k++)
 	{
-		if (tipo[k]>nVel)
+		if ((int)tipo[k]>nVel)
 			return 1;
 
 		// Compute the time required to travel the arc
-		tempo[k] = long( (((float)distanza[k]*3.6) / (float)Vel[tipo[k]]) + 0.5 ) ;
+		tempo[k] = long( (((float)distanza[k]*3.6) / (float)Vel[(int)tipo[k]]) + 0.5 ) ;
 
 		// Compute the time (comparable with distance) required to travel the arc,
 		// where an average speed of AvgVel is assumed
-		time = long( (((float)distanza[k]*AvgVel) / (float)Vel[tipo[k]]) + 0.5 ) ;
+		time = long( (((float)distanza[k]*AvgVel) / (float)Vel[(int)tipo[k]]) + 0.5 ) ;
 		// time=tempo[k];
 
 		// Cost of the arc of code k

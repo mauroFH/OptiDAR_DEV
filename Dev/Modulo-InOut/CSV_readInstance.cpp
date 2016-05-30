@@ -17,7 +17,6 @@
  * @return -1 if the code does not exists; position of the stop in v_Stops[], otherwise
  */
 int C_CSV::CSVsearchStop(C_IST *Ist, unsigned char *stopCode){
-	char *NomeProc = (char *) "CSV_searchStop";
 	int i;
 	for (i = 0; i < Ist->num_Points; i++){
 		//        if (strncmp( (char *)Ist->v_Stops[i].Cod,(char *)stopCode,CON_MAXNCODSTOP) == 0) return i;
@@ -384,7 +383,7 @@ int C_CSV::CSV_readStopPoint(char *FileName, C_IST *Ist){
 		id = CSV_readInt(numRec, &numFields, &p, 0, INT_MAX);
 		i = CSVsearchPointId(Ist, id);
 		if (i < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Point Id %d not found", numRec, numFields, id);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Point Id %d not found", numRec, numFields, id);
 			error.fatal(buf, __FUNCTION__);
 		};
 		Ist->v_StopPoints[Ist->num_StopPoints].i_Point = i;
@@ -463,7 +462,7 @@ int C_CSV::CSV_readParkingPoint(char *FileName, C_SHP * mySHP, C_IST *Ist){
 		//int i_Point = CSVsearchPointId(Ist, i);
 		int i_Point = CSVsearchPointId(Ist, id);  // Marco:Maggio2016
 		if (i_Point < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Point Id %d not found", numRec, numFields, id);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Point Id %d not found", numRec, numFields, id);
 			error.fatal(buf, __FUNCTION__);
 		};
 		Ist->v_ParkingPoints[Ist->num_ParkingPoints].i_Point = i_Point;
@@ -551,7 +550,7 @@ int C_CSV::CSV_readParkingPointCapacity(char *FileName, C_SHP *mySHP, C_IST *Ist
 		id = CSV_readInt(numRec, &numFields, &p, 0, INT_MAX);
 		int i_point = CSVsearchParkingPointId(Ist, id);
 		if (i_point < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Point Id %d not found", numRec, numFields, id);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Point Id %d not found", numRec, numFields, id);
 			error.fatal(buf, __FUNCTION__);
 		};
 		//
@@ -560,7 +559,7 @@ int C_CSV::CSV_readParkingPointCapacity(char *FileName, C_SHP *mySHP, C_IST *Ist
 		id = CSV_readInt(numRec, &numFields, &p, 0, CON_MAXCODEVALUE - 1);
 		int i_vehicletype = CSVsearchTypeOfVehicleId(Ist, id);
 		if (i_vehicletype < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Point Id %d not found", numRec, numFields, id);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Point Id %d not found", numRec, numFields, id);
 			error.fatal(buf, __FUNCTION__);
 		};
 		//
@@ -692,7 +691,7 @@ int C_CSV::CSV_readVehicle(char *FileName, C_SHP *mySHP, C_IST *Ist){
 		id = CSV_readInt(numRec, &numFields, &p, 0, CON_MAXCODEVALUE - 1);
 		int i_vehicletype = CSVsearchTypeOfVehicleId(Ist, id);
 		if (i_vehicletype < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Type Of Vehicle %d not found", numRec, numFields, id);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Type Of Vehicle %d not found", numRec, numFields, id);
 			error.fatal(buf, __FUNCTION__);
 		}
 		Ist->v_Vehicles[Ist->num_Vehicles].i_TypeOfVehicle = i;
@@ -789,7 +788,7 @@ int C_CSV::CSV_readVehicleSchedule(char *FileName, C_SHP *mySHP, C_IST *Ist){
 		id = CSV_readInt(numRec, &numFields, &p, 0, CON_MAXCODEVALUE - 1);
 		int i_vehicle = CSVsearchVehicleId(Ist, id);
 		if (i_vehicle < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Vehicle Id %d not found", numRec, numFields, id);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Vehicle Id %d not found", numRec, numFields, id);
 			error.fatal(buf, __FUNCTION__);
 		}
 		Ist->v_VehicleSchedules[Ist->num_VehicleSchedules].i_Vehicle = i_vehicle;
@@ -809,7 +808,7 @@ int C_CSV::CSV_readVehicleSchedule(char *FileName, C_SHP *mySHP, C_IST *Ist){
 		id = CSV_readInt(numRec, &numFields, &p, 0, CON_MAXCODEVALUE - 1);
 		int i_park = CSVsearchParkingPointId(Ist, id);
 		if (i_park < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Parking Point Id %d not found", numRec, numFields, id);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Parking Point Id %d not found", numRec, numFields, id);
 			error.fatal(buf, __FUNCTION__);
 		}
 		Ist->v_VehicleSchedules[Ist->num_VehicleSchedules].i_StartDepot = i_park;
@@ -819,7 +818,7 @@ int C_CSV::CSV_readVehicleSchedule(char *FileName, C_SHP *mySHP, C_IST *Ist){
 		id = CSV_readInt(numRec, &numFields, &p, 0, CON_MAXCODEVALUE - 1);
 		i_park = CSVsearchParkingPointId(Ist, id);
 		if (i_park < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Parking Point Id %d not found", numRec, numFields, id);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Parking Point Id %d not found", numRec, numFields, id);
 			error.fatal(buf, __FUNCTION__);
 		}
 		Ist->v_VehicleSchedules[Ist->num_VehicleSchedules].i_EndDepot = i_park;
@@ -903,7 +902,7 @@ int C_CSV::CSV_readRequest(char *FileName, C_SHP *mySHP, C_IST *Ist){
 		{
 			int i_vehicletype = CSVsearchTypeOfVehicleId(Ist, id);
 			if (i_vehicletype < 0) {
-				snprintf(buf, sizeof(buf), "Record = %d field %d Type Of Vehicle %d not found", numRec, numFields, id);
+				snprintf(buf, sizeof(buf), "Record = %ld field %d Type Of Vehicle %d not found", numRec, numFields, id);
 				error.fatal(buf, __FUNCTION__);
 			}
 			Ist->v_Requests[Ist->num_Requests].i_TypeOfVehicle = i;
@@ -953,7 +952,7 @@ int C_CSV::CSV_readRequest(char *FileName, C_SHP *mySHP, C_IST *Ist){
 		{
 			int i_vehicle = CSVsearchVehicleId(Ist, id);
 			if (i_vehicle < 0) {
-				snprintf(buf, sizeof(buf), "Record = %d field %d VehicleID %d not found", numRec, numFields, id);
+				snprintf(buf, sizeof(buf), "Record = %ld field %d VehicleID %d not found", numRec, numFields, id);
 				error.fatal(buf, __FUNCTION__);
 			}
 			Ist->v_Requests[Ist->num_Requests].i_Vheicle = i;
@@ -1018,7 +1017,7 @@ int C_CSV::CSV_readRequestAddress(char *FileName, C_SHP *mySHP, C_IST *Ist){
 		id = CSV_readInt(numRec, &numFields, &p, 0, INT_MAX);
 		int i_request = CSVsearchRequestId(Ist, id);
 		if (i_request < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Request ID %d not found", numRec, numFields, id);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Request ID %d not found", numRec, numFields, id);
 			error.fatal(buf, __FUNCTION__);
 		}
 		//
@@ -1027,7 +1026,7 @@ int C_CSV::CSV_readRequestAddress(char *FileName, C_SHP *mySHP, C_IST *Ist){
 		id = CSV_readInt(numRec, &numFields, &p, 0, INT_MAX);
 		int i_StopPoint = CSVsearchStopPointId(Ist, id);
 		if (i_StopPoint < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Stop Point ID %d not found", numRec, numFields, id);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Stop Point ID %d not found", numRec, numFields, id);
 			error.fatal(buf, __FUNCTION__);
 		}
 		//
@@ -1040,7 +1039,7 @@ int C_CSV::CSV_readRequestAddress(char *FileName, C_SHP *mySHP, C_IST *Ist){
 		CSV_readString(numRec, &numFields, &p, word);
 		int i_action = ACTIONTYPEOFPOINTFIND(word);
 		if (i_action < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d Action Type invalid  %s", numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d Action Type invalid  %s", numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 		}
 		//
@@ -1131,7 +1130,7 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 
 		//////// Parameter Name
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d not found", numRec, numFields);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d not found", numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
@@ -1153,19 +1152,19 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 
 		//////// Value
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d not found", numRec, numFields);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d not found", numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
 		if (CSVnonIntero(word))	{
-			snprintf(buf, sizeof(buf), "Record = %d field %d not an integer = %s", numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d not an integer = %s", numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
-		sscanf(word_dummy, "%d", &i);
+		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
-			snprintf(buf, sizeof(buf), "Record = %d field %d negative = %d", numRec, numFields, i);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d negative = %ld", numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
@@ -1246,7 +1245,7 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 
 		//////// Parameter Name
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d not found", numRec, numFields);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d not found", numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
@@ -1268,19 +1267,19 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 
 		//////// Value
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
-			snprintf(buf, sizeof(buf), "Record = %d field %d not found", numRec, numFields);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d not found", numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		};
 		if (CSVnonIntero(word))	{
-			snprintf(buf, sizeof(buf), "Record = %d field %d not an integer = %s", numRec, numFields, word);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d not an integer = %s", numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
-		sscanf(word_dummy, "%d", &i);
+		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
-			snprintf(buf, sizeof(buf), "Record = %d field %d negative = %d", numRec, numFields, i);
+			snprintf(buf, sizeof(buf), "Record = %ld field %d negative = %ld", numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
 			return(-1);
 		}
