@@ -22,9 +22,9 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
     int WaypointId = Ist->RouteID*CON_MAXWAYPOINTSROUTE + 1;
     int SolutionId = Ist->SolutionID;
     int VehicleId = Ist->TRoute.VehicleID;
-    int PointOrder = 1;
+    int PointOrder = 0;
     int RouteId = Ist->RouteID;
-    int RoutePointId = Ist->RouteID*CON_MAXSTOPSROUTE + 1;
+    int RoutePointId = Ist->RouteID*CON_MAXSTOPSROUTE + 0;
 
     v_lastWritten.X = v_lastWritten.Y = -1;
 
@@ -123,12 +123,12 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
                                 if (!mySHP->SHP_PointsCoincide(v_lastWritten, v1)) {
                                         // write v
                                         CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v1, a->info.id);
-                                        WaypointId++; v_lastWritten = v1; //PointOrder++;
+                                        WaypointId++; v_lastWritten = v1; 
                                 }
                                 if (!mySHP->SHP_PointsCoincide(v_lastWritten, v2)) {
                                         // write v
                                         CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v2, a->info.id);
-                                        WaypointId++; v_lastWritten = v2; //PointOrder++; 
+                                        WaypointId++; v_lastWritten = v2; 
                                 }
                             }
                         }else{
@@ -139,15 +139,14 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
                                     // write v
                                     if (!mySHP->SHP_PointsCoincide(v_lastWritten, v1)) {
                                             CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, -1, RouteId, v1, a->info.id);
-                                            WaypointId++; v_lastWritten = v1; //PointOrder++;  
+                                            WaypointId++; v_lastWritten = v1; 
                                     }
                             }
                             do {
                                     // write the stop
                                     FlagFirstStopDone = true;
-                                    PointOrder++; RoutePointId++;
                                     CSV_writeWaypointsRow(&fout, WaypointId, SessionId, SolutionId, VehicleId, PointOrder, RoutePointId, RouteId, v_stop, a->info.id);
-                                    WaypointId++; v_lastWritten = v_stop;
+                                    PointOrder++; RoutePointId++; WaypointId++; v_lastWritten = v_stop;
                                     i_stop++;
                                     if (i_stop >= Ist->TRoute.nstop)   // all stops written 
                                             goto terminate;
@@ -176,12 +175,8 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
 terminate:
 
     // Free memory
-    if (shpObject != NULL)
-    {
-            free(shpObject);
-            shpObject = NULL;
-    }
-
+    if (shpObject != NULL) SHPDestroyObject(shpObject);
+    //{   free(shpObject); shpObject = NULL;   }
     // Close files
     fout.close();
     SHPClose(shpHandle);

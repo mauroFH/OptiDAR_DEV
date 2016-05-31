@@ -1079,14 +1079,14 @@ terminate:
 	return rvalue;
 }
 
-/**
+/*
  * Check if a point or its projection are on a segment
  * @param p input = point to be evaluated
  * @param v input = first point of the segment
  * @param w input = second point of the segment
  * @return 1 if the point or its projection is on the segment, 0 otherwise
- */
-int C_SHP::SHP_isPointOnSegment(XYPoint_STR p, XYPoint_STR v, XYPoint_STR w){
+ *
+ int C_SHP::SHP_isPointOnSegment(XYPoint_STR p, XYPoint_STR v, XYPoint_STR w){
 
 	//printf("\n ZZ -> %lf, %lf, %lf, %lf, %lf, %lf \n", p.X, p.Y, v.X, v.Y, w.X, w.Y);
 
@@ -1111,9 +1111,9 @@ int C_SHP::SHP_isPointOnSegment(XYPoint_STR p, XYPoint_STR v, XYPoint_STR w){
 	// here the projection of p is inside the segment !
 	//printf("\n Yes \n");
 
-	return 1;
+	return 1;     
 }
-
+*/
 /**
 * Check if a point or its projection are on a segment
 * @param p input = point to be evaluated
@@ -1126,27 +1126,31 @@ int C_SHP::SHP_isPointOnSegmentMio(double px, double py, double vx, double vy, d
 	//printf("\n ZZ -> %lf, %lf, %lf, %lf, %lf, %lf \n", px, py, vx, vy, wx, wy);
 
 	double L2;
-	double  t;
+	double  d, t;
+        XYPoint_STR projection, p;
 
 	//printf("\n XX -> %lf, %lf, %lf, %lf, %lf, %lf \n", px, py, vx, vy, wx, wy);
 
 	L2 = (vx - wx)*(vx - wx) + (vy - wy)*(vy - wy); //length_squared(v, w); i.e. |w-v|^2              
 	//printf("\n Den = %lf, %lf, %lf, %lf, %lf, %lf, %lf \n", L2, px, py, vx, vy, wx, wy);
 
-	if (L2 < CON_EPS)
-		t = 2;
-	else
+	if (L2 < CON_EPS){
+		t = 2; projection.X = vx; projection.Y = vy;
+	}else{
 		t = ((px - vx) * (wx - vx) + (py - vy) * (wy - vy)) / L2;
-	
+                projection.X = vx + t * (wx - vx);
+                projection.Y = vy + t * (wy - vy);
+	}
 	//printf("\n    t = %lf \n", t);
 
 	if (t > 1 || t < 0)
 		return 0; // projection of p outside the segment
 
+        p.X = px; p.Y = py;
 	// here the projection of p is inside the segment !
-	//printf("\n Yes \n");
-
-	return 1;
+        d = SHPplanarDistance2P(p, projection);
+        if (d < shpEPS )  return 1;
+        else              return 0;
 }
 
 /**
