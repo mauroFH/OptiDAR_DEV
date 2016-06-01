@@ -175,7 +175,7 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
 terminate:
 
     // Free memory
-    if (shpObject != NULL) SHPDestroyObject(shpObject);
+    //if (shpObject != NULL) SHPDestroyObject(shpObject);
     //{   free(shpObject); shpObject = NULL;   }
     // Close files
     fout.close();
