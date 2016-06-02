@@ -14,7 +14,7 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
     XYPoint_STR v_stop, v_lastWritten, v1, v2;
     int shpType, numElements, i_arc, k_arc, i_stop;
     double padfMinBound[4], padfMaxBound[4];
-    //double L2;
+    double dummy1,dummy2;
     Arc_STR *a;
     IShape_STR *is;
     ofstream fout;
@@ -113,7 +113,7 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
                         v1.X = shpObject->padfX[i_v1];  v1.Y = shpObject->padfY[i_v1];   // starting point of the segment
                         v2.X = shpObject->padfX[i_v2];  v2.Y = shpObject->padfY[i_v2]; // ending point of the segment
                         //if (Ist->TRoute.v_stop_out[i_stop].indexArc != i_arc || !mySHP->SHP_isPointOnSegment(v_stop, v1, v2)){
-                        if (Ist->TRoute.v_stop_out[i_stop].indexArc != i_arc || !mySHP->SHP_isPointOnSegmentMio(v_stop.X, v_stop.Y, v1.X, v1.Y, v2.X, v2.Y)){
+                        if (Ist->TRoute.v_stop_out[i_stop].indexArc != i_arc || !mySHP->SHP_isPointOnSegment(v_stop, v1, v2, &dummy1, &dummy2)){
                             //
                             // the stop is not on this arc 
                             // ** OR **
@@ -155,7 +155,7 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
                                             v_stop = Ist->v_Points[Ist->v_StopPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
                                     else // parking point
                                             v_stop = Ist->v_Points[Ist->v_ParkingPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
-                            } while (mySHP->SHP_isPointOnSegmentMio(v_stop.X, v_stop.Y, v1.X, v1.Y, v2.X, v2.Y));
+                            } while (mySHP->SHP_isPointOnSegment(v_stop, v1, v2, &dummy1, &dummy2));
                             //while (mySHP->SHP_isPointOnSegment(v_stop, v1, v2));
                             // i_stop is not on segment (v1,v2)
                             if (!mySHP->SHP_PointsCoincide(v_lastWritten, v2)) {
@@ -219,6 +219,7 @@ int C_CSV::CSV_writeWaypointsFirstArc(SHPHandle shpHandle, ofstream *fout, int *
 	int i, i_stop, k_arc;
 	Arc_STR *a;
 	IShape_STR *is;
+        double dummy1, dummy2;
 	bool stopReached = false;
 	//CError error;
 
@@ -273,7 +274,7 @@ int C_CSV::CSV_writeWaypointsFirstArc(SHPHandle shpHandle, ofstream *fout, int *
 			//
 			if (!stopReached) {
 				//if (!mySHP->SHP_isPointOnSegment(p, v, w)) continue;
-				if (!mySHP->SHP_isPointOnSegmentMio(p.X, p.Y, v.X, v.Y, w.X, w.Y)) continue;
+				if (!mySHP->SHP_isPointOnSegment(p, v, w, &dummy1, &dummy2)) continue;
 				//
 				// point on this segment
 				//

@@ -1,4 +1,4 @@
-/*
+    /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -199,7 +199,7 @@ struct route_out{
     long indexDT;       /// Index in v_DT_back[] 
     long indexReq;      /// Index in the request list v_Request[] 
     bool StopOrPark;    /// 0 if the indexSoP refers to v_StopPoints[]; 1 if refers to v_ParkingPoints[]        
-    long indexSoP;      /// Index in  v_Stops[] or in v_ParkingPoints []
+    long indexSoP;      /// Index in  v_StopPoints[] or in v_ParkingPoints []
     char code[CON_MAXNCODREQUEST];  /// Request code 
     long type;          /// Type: 0=DEPOT, 1=PICKUP, 2=DELIVERY, 3=PARK (others?) 
     long distance;      /// Distance travelled (from the beginning) 
@@ -214,7 +214,7 @@ struct route_out{
 };
 
 struct tab_route{
-	long VehicleID;     /// VehicleID
+    long VehicleID;     /// VehicleID
     long nstop;         /// number of elements in v_stop_out
     struct route_out *v_stop_out;
     struct route_arcs RArcs;
@@ -226,9 +226,9 @@ struct matrice_dt{
     long **m_length;  /// Length matrix  (size: dim x dim)
     long **m_time;    /// Time matrix (size: dim x dim)
     long **m_vpred;   /// Predecessor vertex matrix (size: dim x nvert)
-	long **m_apred;   /// Predecessor arc matrix  (size: dim x nevert)
-	long **m_mapi;    /// real starting index in the original matrix  
-	long **m_mapj;    /// real ending index in the original matrix  
+    long **m_apred;   /// Predecessor arc matrix  (size: dim x nevert)
+    long **m_mapi;    /// real starting index in the original matrix  
+    long **m_mapj;    /// real ending index in the original matrix  
 };
 
 struct parameters{

@@ -1079,77 +1079,40 @@ terminate:
 	return rvalue;
 }
 
-/*
- * Check if a point or its projection are on a segment
- * @param p input = point to be evaluated
- * @param v input = first point of the segment
- * @param w input = second point of the segment
- * @return 1 if the point or its projection is on the segment, 0 otherwise
- *
- int C_SHP::SHP_isPointOnSegment(XYPoint_STR p, XYPoint_STR v, XYPoint_STR w){
-
-	//printf("\n ZZ -> %lf, %lf, %lf, %lf, %lf, %lf \n", p.X, p.Y, v.X, v.Y, w.X, w.Y);
-
-	double L2;
-	double  t;
-
-	//printf("\n XX -> %lf, %lf, %lf, %lf, %lf, %lf \n", p.X, p.Y, v.X, v.Y, w.X, w.Y);
-
-	L2 = (v.X - w.X)*(v.X - w.X) + (v.Y - w.Y)*(v.Y - w.Y); //length_squared(v, w); i.e. |w-v|^2              
-	//printf("\n Den = %lf, %lf, %lf, %lf, %lf, %lf, %lf \n", L2, p.X, p.Y, v.X, v.Y, w.X, w.Y);
-	
-	if (L2 < CON_EPS)
-		t = 2;
-	else
-		t = ((p.X - v.X) * (w.X - v.X) + (p.Y - v.Y) * (w.Y - v.Y)) / L2;
-
-	//printf("\n    t = %lf \n", t);
-
-	if (t > 1 || t < 0) 
-		return 0; // projection of p outside the segment
-
-	// here the projection of p is inside the segment !
-	//printf("\n Yes \n");
-
-	return 1;     
-}
-*/
 /**
 * Check if a point or its projection are on a segment
 * @param p input = point to be evaluated
 * @param v input = first point of the segment
 * @param w input = second point of the segment
-* @return 1 if the point or its projection is on the segment, 0 otherwise
+* @param offset output = percentage offset with respect to v
+* @param distance output = distance of p from the segment (-1  if the point is not on the segment)
+* @return 1 if the point  is on the segment, 0 otherwise
 */
-int C_SHP::SHP_isPointOnSegmentMio(double px, double py, double vx, double vy, double wx, double wy){
+int C_SHP::SHP_isPointOnSegment(XYPoint_STR p, XYPoint_STR v, XYPoint_STR w, double *offset, double *distance){
 
-	//printf("\n ZZ -> %lf, %lf, %lf, %lf, %lf, %lf \n", px, py, vx, vy, wx, wy);
 
-	double L2;
-	double  d, t;
-        XYPoint_STR projection, p;
+	static double L2;
+	double  t;
+        XYPoint_STR projection;
+        *distance = *offset = -1;
 
-	//printf("\n XX -> %lf, %lf, %lf, %lf, %lf, %lf \n", px, py, vx, vy, wx, wy);
-
-	L2 = (vx - wx)*(vx - wx) + (vy - wy)*(vy - wy); //length_squared(v, w); i.e. |w-v|^2              
-	//printf("\n Den = %lf, %lf, %lf, %lf, %lf, %lf, %lf \n", L2, px, py, vx, vy, wx, wy);
+	L2 = (v.X - w.X)*(v.X - w.X) + (v.Y - w.Y)*(v.Y - w.Y); //length_squared(v, w); i.e. |w-v|^2              
 
 	if (L2 < CON_EPS){
-		t = 2; projection.X = vx; projection.Y = vy;
+		t = 2; projection.X = v.X; projection.Y = v.Y;
 	}else{
-		t = ((px - vx) * (wx - vx) + (py - vy) * (wy - vy)) / L2;
-                projection.X = vx + t * (wx - vx);
-                projection.Y = vy + t * (wy - vy);
+		t = ((p.X - v.X) * (w.X - v.X) + (p.Y - v.Y) * (w.Y - v.Y)) / L2;
+                projection.X = v.X + t * (w.X - v.X);
+                projection.Y = v.Y + t * (w.Y - v.Y);
 	}
-	//printf("\n    t = %lf \n", t);
 
 	if (t > 1 || t < 0)
 		return 0; // projection of p outside the segment
 
-        p.X = px; p.Y = py;
+        *offset = t;
 	// here the projection of p is inside the segment !
-        d = SHPplanarDistance2P(p, projection);
-        if (d < shpEPS )  return 1;
+        *distance = SHPplanarDistance2P(p, projection);
+        if (*distance < shpEPS )  return 1;
         else              return 0;
 }
 

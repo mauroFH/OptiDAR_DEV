@@ -45,7 +45,7 @@ double C_SHP::SHPplanarDistance2P(XYPoint_STR v, XYPoint_STR w)
  * @param p input point 
  * @param offset output percentage offset with respect to v
  * @return 
- */
+/
 double  C_SHP::SHPminimum_distanceP2Segment(XYPoint_STR v, XYPoint_STR w, XYPoint_STR p, double *offset) {
 	// Return minimum distance between line segment vw and point p
 	const double L2 = (v.X - w.X)*(v.X - w.X) + (v.Y - w.Y)*(v.Y - w.Y); //length_squared(v, w);  // i.e. |w-v|^2 -  avoid a sqrt
@@ -64,7 +64,7 @@ double  C_SHP::SHPminimum_distanceP2Segment(XYPoint_STR v, XYPoint_STR w, XYPoin
 	*offset = t;
 	return SHPplanarDistance2P(p, projection);
 }
-
+*/
 /*int C_SHP::SHPmatchFS(SHPHandle *shpHandle, int numElem, Point p, int *j_arc, int * i_shape  ){
 }*/
 
@@ -152,12 +152,13 @@ double C_SHP::SHPdistancePointPolyline(SHPHandle  shpHandle, DBFHandle dbfHandle
                             // then we discard this arc, since the point is on the right of its companion !
                             int side = SHPpointSide(v1, v2, p); // side < 0 right, side > 0 left
                             if (side == 0 || (side < 0 && RightLeft) || (side > 0 && !RightLeft)) {
-                                    distance = SHPminimum_distanceP2Segment(v1, v2, p, &offset);
+                                if (SHP_isPointOnSegment(p, v1, v2, &offset, &distance) ) {
                                     segment_length = SHPplanarDistance2P(v1, v2);
                                     if (min_distance < 0 || distance < min_distance) {
-                                            min_distance = distance;
-                                            *l_offset = length + offset * segment_length;
+                                        min_distance = distance;
+                                        *l_offset = length + offset * segment_length;
                                     }
+                                }
 
                             }
 			}

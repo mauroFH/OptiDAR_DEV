@@ -49,7 +49,7 @@ private:
 
 	double  SHPdistancePointArc(SHPHandle  shpHandle, DBFHandle  dbfHandle, Arc_STR *a, XYPoint_STR p, bool RightLeft, double *l_offset);
 	double  SHPdistancePointPolyline(SHPHandle  shpHandle, DBFHandle dbfHandle, IShape_STR *is, XYPoint_STR p, bool RightLeft, double *l_offset);
-	double  SHPminimum_distanceP2Segment(XYPoint_STR v, XYPoint_STR w, XYPoint_STR p, double *offset);
+	//double  SHPminimum_distanceP2Segment(XYPoint_STR v, XYPoint_STR w, XYPoint_STR p, double *offset);
 	double  SHPplanarDistance2P(XYPoint_STR v, XYPoint_STR w);
 	//int     SHPreadPoints(SHPHandle  shpHandle, DBFHandle  dbfHandle);
 
@@ -60,8 +60,7 @@ public:
 	~C_SHP();
 	void clear();
 
-	int SHP_isPointOnSegment(XYPoint_STR p, XYPoint_STR v, XYPoint_STR w);
-	int SHP_isPointOnSegmentMio(double px, double py, double vx, double vy, double wx, double wy);
+        int SHP_isPointOnSegment(XYPoint_STR p, XYPoint_STR v, XYPoint_STR w, double *offset, double *distance);
 	int SHP_PointsCoincide(XYPoint_STR p1, XYPoint_STR v2);
 	int SHP_isPointOnArc(SHPHandle  shpHandle, XYPoint_STR p, int i_arc, C_IST *);
 
