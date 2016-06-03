@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Modulo-Dijkstra">
+      <UniqueIdentifier>{21741f3b-c05a-4942-949f-f5c014963182}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Modulo-InOut">
+      <UniqueIdentifier>{72cedd40-eb6c-4753-99dc-3722d816edd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Modulo-Opti">
+      <UniqueIdentifier>{c2c28474-bf05-4e59-9cec-5f065a9ec007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Modulo-ShapeLib">
+      <UniqueIdentifier>{27c3395d-67b3-41e6-ae45-ac6562fee1e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Modulo-SQLServer">
+      <UniqueIdentifier>{f5139d67-17a8-4af6-9a27-d96afad83bff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modulo-Dijkstra">
+      <UniqueIdentifier>{45c11f0f-ea68-4465-bcfb-67dba2883ab5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modulo-InOut">
+      <UniqueIdentifier>{e44a1a68-7d1a-4ecf-acc5-1cb668501b5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modulo-Opti">
+      <UniqueIdentifier>{9189b707-6cfd-4069-a7ac-f760ddd68cff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modulo-ShapeLib">
+      <UniqueIdentifier>{99f2ddb2-9e82-415f-8efc-38c8d7582b15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modulo-SQLServer">
+      <UniqueIdentifier>{b3818b79-c658-45eb-b785-b255a25a6706}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Modulo-Main">
+      <UniqueIdentifier>{3b693907-6b4b-407c-a679-42494cd829ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Modulo-Main">
+      <UniqueIdentifier>{925aabe9-c49d-40e2-bf5b-ea49e574510f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Modulo-Dijkstra\DijkstraObj.h">
+      <Filter>Header Files\Modulo-Dijkstra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-InOut\ModuloIO.h">
+      <Filter>Header Files\Modulo-InOut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-Opti\include\constants.h">
+      <Filter>Header Files\Modulo-Opti</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-Opti\include\DAR.h">
+      <Filter>Header Files\Modulo-Opti</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-Opti\include\errors.h">
+      <Filter>Header Files\Modulo-Opti</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-Opti\include\hsv.h">
+      <Filter>Header Files\Modulo-Opti</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-Opti\include\random.h">
+      <Filter>Header Files\Modulo-Opti</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-Opti\include\solution.h">
+      <Filter>Header Files\Modulo-Opti</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-Opti\include\sort.h">
+      <Filter>Header Files\Modulo-Opti</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-Opti\include\utils.h">
+      <Filter>Header Files\Modulo-Opti</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-ShapeLib\shapefil.h">
+      <Filter>Header Files\Modulo-ShapeLib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-InOut\LatLong.h">
+      <Filter>Header Files\Modulo-InOut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-Main\darh.h">
+      <Filter>Header Files\Modulo-Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-InOut\C_CSV.h">
+      <Filter>Header Files\Modulo-InOut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-InOut\C_SHP.h">
+      <Filter>Header Files\Modulo-InOut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modulo-InOut\C_IST.h">
+      <Filter>Header Files\Modulo-InOut</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Modulo-Dijkstra\DijkstraObj.cpp">
+      <Filter>Source Files\Modulo-Dijkstra</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-InOut\CSV_OptiDataIO.cpp">
+      <Filter>Source Files\Modulo-InOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-InOut\CSV_readInstance.cpp">
+      <Filter>Source Files\Modulo-InOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-InOut\CSV_Utilities.cpp">
+      <Filter>Source Files\Modulo-InOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-InOut\ModuloIO.cpp">
+      <Filter>Source Files\Modulo-InOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-InOut\SHP_Graph_Utilities.cpp">
+      <Filter>Source Files\Modulo-InOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-InOut\SHP_node_Utilities.cpp">
+      <Filter>Source Files\Modulo-InOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-InOut\SHP_Polyline_Utilities.cpp">
+      <Filter>Source Files\Modulo-InOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Opti\src\dar.cpp">
+      <Filter>Source Files\Modulo-Opti</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Opti\src\dar-feasibility.cpp">
+      <Filter>Source Files\Modulo-Opti</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Opti\src\dar-io.cpp">
+      <Filter>Source Files\Modulo-Opti</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Opti\src\errors.cpp">
+      <Filter>Source Files\Modulo-Opti</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Opti\src\hsv.cpp">
+      <Filter>Source Files\Modulo-Opti</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Opti\src\main_DAR.cpp">
+      <Filter>Source Files\Modulo-Opti</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Opti\src\random.cpp">
+      <Filter>Source Files\Modulo-Opti</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Opti\src\solution.cpp">
+      <Filter>Source Files\Modulo-Opti</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Opti\src\sort.cpp">
+      <Filter>Source Files\Modulo-Opti</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Opti\src\utils.cpp">
+      <Filter>Source Files\Modulo-Opti</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-ShapeLib\dbfopen.c">
+      <Filter>Source Files\Modulo-ShapeLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-ShapeLib\safileio.c">
+      <Filter>Source Files\Modulo-ShapeLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-ShapeLib\shpopen.c">
+      <Filter>Source Files\Modulo-ShapeLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-ShapeLib\shptree.c">
+      <Filter>Source Files\Modulo-ShapeLib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-InOut\LatLong.cpp">
+      <Filter>Source Files\Modulo-InOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-Main\main.cpp">
+      <Filter>Source Files\Modulo-Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modulo-InOut\CSV_writeSolution.cpp">
+      <Filter>Source Files\Modulo-InOut</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

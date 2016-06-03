@@ -1,0 +1,92 @@
+HSV heuristic
+DAR data:
+ #nodes...........  44
+ #depots..........   8
+ #requests........  18
+ #vehicles........   1
+ #vehicles type...   1
+ #dimensions......   2
+
+Nodes:
+  node    1 type     PICKUP time-window [35400,36000] time-window [09:50|A,10:00|A]
+  node    2 type     PICKUP time-window [50700,51300] time-window [14:05|A,14:15|A]
+  node    3 type     PICKUP time-window [42000,42600] time-window [11:40|A,11:50|A]
+  node    4 type     PICKUP time-window [50700,51300] time-window [14:05|A,14:15|A]
+  node    5 type     PICKUP time-window [39900,40500] time-window [11:05|A,11:15|A]
+  node    6 type     PICKUP time-window [58200,58800] time-window [16:10|A,16:20|A]
+  node    7 type     PICKUP time-window [55800,56400] time-window [15:30|A,15:40|A]
+  node    8 type     PICKUP time-window [57000,57600] time-window [15:50|A,16:00|A]
+  node    9 type     PICKUP time-window [51000,51600] time-window [14:10|A,14:20|A]
+  node   10 type     PICKUP time-window [38700,39300] time-window [10:45|A,10:55|A]
+  node   11 type     PICKUP time-window [58800,59400] time-window [16:20|A,16:30|A]
+  node   12 type     PICKUP time-window [42480,43080] time-window [11:48|A,11:58|A]
+  node   13 type     PICKUP time-window [58200,58800] time-window [16:10|A,16:20|A]
+  node   14 type     PICKUP time-window [58500,59100] time-window [16:15|A,16:25|A]
+  node   15 type     PICKUP time-window [52800,53400] time-window [14:40|A,14:50|A]
+  node   16 type     PICKUP time-window [50940,51540] time-window [14:09|A,14:19|A]
+  node   17 type     PICKUP time-window [61200,61800] time-window [17:00|A,17:10|A]
+  node   18 type     PICKUP time-window [52020,52620] time-window [14:27|A,14:37|A]
+  node   19 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   20 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   21 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   22 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   23 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   24 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   25 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   26 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   27 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   28 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   29 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   30 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   31 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   32 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   33 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   34 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   35 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   36 type   DELIVERY time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   37 type PARKING_AREA time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   38 type PARKING_AREA time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   39 type PARKING_AREA time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   40 type PARKING_AREA time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   41 type PARKING_AREA time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   42 type VEHICLE_DEPOT time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   43 type PARKING_AREA time-window [0,172800] time-window [00:00|A,00:00|C]
+  node   44 type PARKING_AREA time-window [0,172800] time-window [00:00|A,00:00|C]
+WARNING: Request 1: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 1800 < 99999 CDar::checkrequests
+WARNING: Request 2: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 900 < 99999 CDar::checkrequests
+WARNING: Request 4: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 900 < 99999 CDar::checkrequests
+WARNING: Request 6: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 900 < 99999 CDar::checkrequests
+WARNING: Request 7: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 1800 < 99999 CDar::checkrequests
+WARNING: Request 8: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 1800 < 99999 CDar::checkrequests
+WARNING: Request 9: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 1800 < 99999 CDar::checkrequests
+WARNING: Request 11: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 1500 < 99999 CDar::checkrequests
+WARNING: Request 12: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 1500 < 99999 CDar::checkrequests
+WARNING: Request 13: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 1200 < 99999 CDar::checkrequests
+WARNING: Request 14: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 1500 < 99999 CDar::checkrequests
+WARNING: Request 15: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 1200 < 99999 CDar::checkrequests
+WARNING: Request 16: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 900 < 99999 CDar::checkrequests
+WARNING: Request 17: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 900 < 99999 CDar::checkrequests
+WARNING: Request 18: infeasible CDar::checkrequests
+WARNING:    -->Request infeasible for ride time: 900 < 99999 CDar::checkrequests
+
+ HSV heuristic
+ ...terminated.
+
+ HSV heuristic
+ ...terminated.
+
+Total computing time 0.686000

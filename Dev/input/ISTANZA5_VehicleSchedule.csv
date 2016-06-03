@@ -1,0 +1,4 @@
+VehicleScheduleId;SessionId;VehicleID;StartTime;EndTime;StartDepotId;EndDepotId
+11;5;5;30300;43500;38;38
+12;5;5;50100;65100;38;38
+

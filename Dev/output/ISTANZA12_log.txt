@@ -1,0 +1,17 @@
+OptiDAR: Start 
+
+
+OptiDAR: Read Data 
+
+  Computing Time (sec) Read Data:  0.405
+
+
+OptiDAR: Optimization 
+
+  Computing Time (sec) Optimization:  0.047
+
+
+OptiDAR: Write Solution 
+
+  Computing Time (sec) Write Solution:  0.053
+
