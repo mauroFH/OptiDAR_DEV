@@ -1,3 +1,0 @@
-RequestId;SessionId;RequestCode;BookedAt;Priority;TypeOfVehicleId;CustomerCode;MaxTransit;ServiceTime;ConfirmedTime;LoadNormal;LoadDisabled;LoadWheelChair;VehicleID;ConfirmedRange;TimeWindowRange
-68;11;6066354;2016-05-26 17:11:44.000;;;49370;1800;0;;1;0;0;;0;
-

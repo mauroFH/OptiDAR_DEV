@@ -1,4 +1,0 @@
-RequestAddressId;SessionId;RequestId;StopPointId;Ordinal;ActionType;StartTime;EndTime;EstimatedTime
-137;12;69;97;1;Pickup;37800;38400;
-138;12;69;98;2;DropOff;;;
-
