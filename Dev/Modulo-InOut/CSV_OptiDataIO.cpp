@@ -313,6 +313,8 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 		i2 = Ist->MatrixDT.m_mapj[j1][j2];
 		k1 = Ist->v_DT_back[i1].karc;
 		k2 = Ist->v_DT_back[i2].karc;
+		assert(k1 >= 0);
+		assert(k2 >= 0);
 		v1 = Ist->v_ArcsFS[k1].to;
 		v2 = Ist->v_ArcsFS[k2].from;
 
@@ -391,6 +393,8 @@ int C_CSV::CSV_OptiIODebug(C_IST *Ist)
 
 		k1 = Ist->TRoute.v_stop_out[i].indexArc;
 		k2 = Ist->TRoute.RArcs.arc[k1];
+		assert(k1 >= 0);
+		assert(k2 >= 0);
 		i1 = Ist->v_ArcsFS[k2].from;
 		i2 = Ist->v_ArcsFS[k2].to;
 		printf("Arco stop %ld: indice=%ld  arco=%ld - (%ld,%ld) \n", i, k1, k2, i1, i2);

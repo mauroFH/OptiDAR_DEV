@@ -1,0 +1,13 @@
+ #nodes; #depots; #requests; #vehicles; #vehicles type; #dimensions
+10;8;1;1;1;2
+  depot ; code ; e(i) ;l(i)
+1;CALZAA01;30300;43500
+2;CALZAA63;30300;43500
+3;CANTUA15;30300;43500
+4;CANTUA16;30300;43500
+5;CANTUA19;30300;43500
+6;CANTUA21;30300;43500
+7;CANTUA30;30300;43500
+8;CANTUA99;30300;43500
+  request ; code ; e(i) ;l(i);ride(i)
+1;6066165;32400;33000;720

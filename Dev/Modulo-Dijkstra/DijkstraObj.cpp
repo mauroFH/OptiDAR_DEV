@@ -1893,12 +1893,21 @@ long Dijkstra::ComputePaths(long root, long ns, long *sink, long *length, long *
 		bit[i] = val;
 	}
 
-	zns = ns;
-	for (i = 0; i<ns; i++)
+	//zns = ns;
+	zns = 0;
+	for (i = 0; i < ns; i++)
 	{
-		k = (sink[i]) / lsize; 
-		j = (sink[i]) % lsize; 
-		zsink[k] = zsink[k] | bit[j];
+		if (sink[i] >= 0)
+		{
+			k = (sink[i]) / lsize;
+			j = (sink[i]) % lsize;
+
+			if (!(zsink[k] & bit[j]))
+			{
+				zsink[k] = zsink[k] | bit[j];
+				zns++;
+			}
+		}
 	}
 
 	// Initialize the hash n.1 empty
@@ -1939,7 +1948,6 @@ long Dijkstra::ComputePaths(long root, long ns, long *sink, long *length, long *
 	while (1)
 	{
 		// Check if a "sink" is reached
-		// NOTE: at the moment we do not manage the case when some sinks are equal!
 		k = inew / lsize;
 		j = inew % lsize;
 		if (zsink[k] & bit[j])
@@ -2208,41 +2216,52 @@ round2:
 	{
 		for (h = 0; h<ns; h++)
 		{
-			km = 0;
-			sec = 0;
-			j = sink[h];
-			while (ipred[j] >= 0)
+			// Is the sink defined? 
+			if (sink[h] < 0)
 			{
-				i = ipred[j];
-
-				ipos1 = index[i];
-				ipos2 = index[i + 1] - 1;
-
-				// We are now going to scan the arcs between the above two markers
-				costb = large;
-				kcb = -1;
-				for (k = ipos1; k <= ipos2; k++)
+				km = +CON_MAXINT;
+				sec = +CON_MAXINT;
+				continue;
+			}
+			else
+			{
+				// If the sink is denined, then evaluate time and distance
+				km = 0;
+				sec = 0;
+				j = sink[h];
+				while (ipred[j] >= 0)
 				{
-					jj = jver[k];
-					if (jj == j)
+					i = ipred[j];
+
+					ipos1 = index[i];
+					ipos2 = index[i + 1] - 1;
+
+					// We are now going to scan the arcs between the above two markers
+					costb = large;
+					kcb = -1;
+					for (k = ipos1; k <= ipos2; k++)
 					{
-						//kcode = codarc[k];  //Marco:Apr2016
-						kcode = k;
-						if (costo[kcode]<costb)
+						jj = jver[k];
+						if (jj == j)
 						{
-							kcb = kcode;
-							costb = costo[kcode];
+							//kcode = codarc[k];  //Marco:Apr2016
+							kcode = k;
+							if (costo[kcode] < costb)
+							{
+								kcb = kcode;
+								costb = costo[kcode];
+							}
 						}
 					}
+
+					if (kcb < 0)
+						return ns;
+
+					km += distanza[kcb];
+					sec += tempo[kcb];
+
+					j = i;
 				}
-
-				if (kcb<0)
-					return ns;
-
-				km += distanza[kcb];
-				sec += tempo[kcb];
-
-				j = i;
 			}
 
 			// If length is required then update
@@ -2289,14 +2308,34 @@ long Dijkstra::ComputePaths(struct DPoint proot, long ns, struct DPoint *psink, 
 	long *sink;
 	long i;
 
+	// Is the root defined?
+	if (proot.karc < 0)
+	{
+		// Setup distance, time, and pred 
+		for (i = 0; i < ns; i++)
+		{
+			length[i] = +CON_MAXINT;
+			time[i] = +CON_MAXINT;
+			if (psink[i].karc >= 0)
+			{
+				predi[psink[i].karc] = -1;
+				predk[psink[i].karc] = -1;
+			}
+		}
+		return 0;
+	}
+
 	// Allocate the sink nodes
 	sink = new long[ns];
 
 	// Setup the starting and ending nodes
-	root = jver[proot.karc];  // Bisogna definirli !!!!!
+	root = jver[proot.karc];  
 	for (i = 0; i < ns; i++)
 	{
-		sink[i] = iver[psink[i].karc];
+		if (psink[i].karc >= 0)
+			sink[i] = iver[psink[i].karc];
+		else
+			sink[i] = -1;
 	}
 
 	// Compute paths
@@ -2318,7 +2357,7 @@ long Dijkstra::ComputePaths(struct DPoint proot, long ns, struct DPoint *psink, 
 			// Update time with offsets
 			time[i] = (long)((psink[i].offset - proot.offset)*tempo[proot.karc]);
 		}
-		else
+		else if (psink[i].karc >=0)
 		{
 			// Update distance with offsets
 			length[i] = length[i] + (long)((1. - proot.offset)*distanza[proot.karc]);
@@ -2327,6 +2366,12 @@ long Dijkstra::ComputePaths(struct DPoint proot, long ns, struct DPoint *psink, 
 			// Update time with offsets
 			time[i] = time[i] + (long)((1. - proot.offset)*tempo[proot.karc]);
 			time[i] = time[i] + (long)((psink[i].offset)*tempo[psink[i].karc]);
+		}
+		else
+		{
+			// The arc is not assigned, therefore we cannot reach the "root"
+			length[i] = +CON_MAXINT;
+			time[i] = +CON_MAXINT;
 		}
 	}
 
