@@ -630,6 +630,7 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 
 		// Add entry for the matrix computation
 		stop = Ist->v_Requests[i].i_pickup_stop;
+		Ist->v_DT_back[nreq].StopOrPark = (bool)0; // StopPoint
 		Ist->v_DT_back[nreq].offset = Ist->v_Points[Ist->v_StopPoints[stop].i_Point].offset;
 		Ist->v_DT_back[nreq].karc = Ist->v_Points[Ist->v_StopPoints[stop].i_Point].i_arc;
 		Ist->v_DT_back[nreq].indexSoP = stop;
@@ -680,7 +681,7 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 
 		// Add entry for the matrix computation
 		stop = Ist->v_Requests[i].i_dropoff_stop;
-                Ist->v_DT_back[nreq].StopOrPark = 0; // StopPoint
+        Ist->v_DT_back[nreq].StopOrPark = (bool)0; // StopPoint
 		Ist->v_DT_back[nreq].offset = Ist->v_Points[Ist->v_StopPoints[stop].i_Point].offset;
 		Ist->v_DT_back[nreq].karc = Ist->v_Points[Ist->v_StopPoints[stop].i_Point].i_arc;
 		Ist->v_DT_back[nreq].indexSoP = stop;
@@ -716,7 +717,7 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 
 		// Add entry for the matrix computation (standard)
 		i_park = i;
-		Ist->v_DT_back[nreq1].StopOrPark = 1; // ParkingPoint                        
+		Ist->v_DT_back[nreq1].StopOrPark = (bool)1; // ParkingPoint                        
 		Ist->v_DT_back[nreq1].offset = Ist->v_Points[Ist->v_ParkingPoints[i_park].i_Point].offset;
 		Ist->v_DT_back[nreq1].karc = Ist->v_Points[Ist->v_ParkingPoints[i_park].i_Point].i_arc;
 		Ist->v_DT_back[nreq1].indexSoP = i_park;
@@ -726,7 +727,7 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 
 		// Add entry for the matrix computation (optional)
 		i_park = i;
-		Ist->v_DT_back[nreq1].StopOrPark = 1; // ParkingPoint  
+		Ist->v_DT_back[nreq1].StopOrPark = (bool)1; // ParkingPoint  
 		if (Ist->v_Points[Ist->v_ParkingPoints[i_park].i_Point].i_arc2 < 0)
 		{
 			Ist->v_DT_back[nreq1].offset = Ist->v_Points[Ist->v_ParkingPoints[i_park].i_Point].offset;

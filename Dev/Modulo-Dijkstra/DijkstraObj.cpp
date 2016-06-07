@@ -2318,8 +2318,8 @@ long Dijkstra::ComputePaths(struct DPoint proot, long ns, struct DPoint *psink, 
 			time[i] = +CON_MAXINT;
 			if (psink[i].karc >= 0)
 			{
-				predi[psink[i].karc] = -1;
-				predk[psink[i].karc] = -1;
+				predi[iver[psink[i].karc]] = -1;
+				predk[iver[psink[i].karc]] = -1;
 			}
 		}
 		return 0;
