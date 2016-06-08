@@ -24,13 +24,11 @@ int C_SHP::SHP_readAndBuildLines(char *filename, C_IST *Ist){
 
 	SHPHandle  shpHandle;
 	DBFHandle  dbfHandle;
-	//CError error;
 	int shpType, shpNumElements, shpNumArcs;
 
 	SHP_myopen(filename, &shpHandle, &dbfHandle, &shpType, &shpNumElements, &shpNumArcs, Ist);
 	if (shpType != 3) {
 		error.fatal(" - this procedure read only type 3 shapefiles (polyline)", __FUNCTION__);
-		exit(0);
 	}
 	SHP_allocateFullLines(shpNumArcs, Ist);
 	SHP_readPolyline(shpHandle, dbfHandle, Ist);
@@ -55,20 +53,17 @@ int C_SHP::SHP_readAndBuildLines(char *filename, C_IST *Ist){
  * @param shpNumArcs number of directed polylines in the shape file
  */
 int C_SHP::SHP_allocateFullLines(int shpNumArcs, C_IST *Ist){
-	char buf[100];
 
 	Ist->v_SHP_Vertices_List = new XYPoint_STR[shpNumArcs * 2];
 	if (Ist->v_SHP_Vertices_List == NULL) {
 		snprintf(buf, sizeof(buf), "- too much vertices %d; cannnot allocate shpVerticesList ", 2 * shpNumArcs);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	SHP_num_Vertices_Dim = shpNumArcs * 2;
 	Ist->v_SHP_Arcs_List = new Arc_STR[shpNumArcs];
 	if (Ist->v_SHP_Arcs_List == NULL) {
 		snprintf(buf, sizeof(buf), "- too much vertices %d; cannot allocate shpArcsList ", shpNumArcs);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	SHP_num_Arcs_Dim = shpNumArcs;
 	for (int i = 0; i < SHP_num_Arcs_Dim; i++) Ist->v_SHP_Arcs_List[i].info.i_shp_first = NULL;
@@ -87,22 +82,18 @@ int C_SHP::SHP_allocateFullLines(int shpNumArcs, C_IST *Ist){
  *  @param *shpNumArcs      : output number of arcs obtained by considering two arcs for the bidirectional polylines (streets)
  */
 double C_SHP::SHP_myopen(char *filename, SHPHandle  *shpHandle, DBFHandle  *dbfHandle, int *shpType, int *numElements, int *shpNumArcs, C_IST *Ist){
-	char   buf[250];
 	double padfMinBound[4], padfMaxBound[4]; // not reported in output
-	//CError error;
 	int i;
 
 	*shpHandle = SHPOpen(filename, "rb");
 	if (*shpHandle == NULL){
-		snprintf(buf, sizeof(buf), "Error opening  SHP file %s\n", filename);
+		snprintf(buf, sizeof(buf), "opening  SHP file %s\n", filename);
 		error.fatal(buf, __FUNCTION__);;
-		return -1;
 	}
 	*dbfHandle = DBFOpen(filename, "rb");
 	if (*dbfHandle == NULL){
-		snprintf(buf, sizeof(buf), "Error opening  DBF file %s\n", filename);
+		snprintf(buf, sizeof(buf), "opening  DBF file %s\n", filename);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	// get general file info
 	SHPGetInfo(*shpHandle, numElements, shpType, padfMinBound, padfMaxBound);
@@ -125,8 +116,7 @@ double C_SHP::SHP_myopen(char *filename, SHPHandle  *shpHandle, DBFHandle  *dbfH
  */
 int C_SHP::SHPattributeDirection(DBFHandle dbfHandle, int numElem){
 	int idOneway;
-	char field[3], buf[100];
-	//CError error;
+	char field[3];
 
 	idOneway = DBFGetFieldIndex(dbfHandle, "ONEWAY");
 
@@ -139,7 +129,7 @@ int C_SHP::SHPattributeDirection(DBFHandle dbfHandle, int numElem){
 	if (strcmp(field, "N") == 0) return 99;
 	snprintf(buf, sizeof(buf), " - wrong code '%s' for element %d", field, numElem);
 	error.fatal(buf, __FUNCTION__);
-	return -1;
+	return -1; // useless, but required for the compiler if strict warning are set
 }
 
 /**
@@ -279,18 +269,16 @@ int C_SHP::SHPreadAndStoreAttributes(DBFHandle dbfHandle, int i_SHP_Elem, int i_
  * @return 
  */
 int C_SHP::SHP_readPolyline(SHPHandle  shpHandle, DBFHandle  dbfHandle, C_IST *Ist){
-	char   buf[250];
 	double padfMinBound[4], padfMaxBound[4]; // dummy
 	int i, shpType, numElements, nv, na;
 	SHPObject *shpObject;
-	//CError error;
+
 
 	// get general file info
 	SHPGetInfo(shpHandle, &numElements, &shpType, padfMinBound, padfMaxBound);
 	if (shpType != 3){
 		snprintf(buf, sizeof(buf), " - wrong shpfile type %d", shpType);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	nv = na = 0;
 	for (i = 0; i < numElements; i++){
@@ -301,12 +289,10 @@ int C_SHP::SHP_readPolyline(SHPHandle  shpHandle, DBFHandle  dbfHandle, C_IST *I
 		if ((dir != 0 && nv + 1 >= SHP_num_Vertices_Dim) || (dir == 0 && nv + 3 >= SHP_num_Vertices_Dim)){
 			snprintf(buf, sizeof(buf), " - too much vertices reading element  %d ", i);
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 		if ((dir != 0 && na >= SHP_num_Arcs_Dim) || (dir == 0 && na + 1 >= SHP_num_Arcs_Dim)){
 			snprintf(buf, sizeof(buf), " - too much arcs reading element  %d ", i);
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 		//
 		// stores the atributes of a first arc. for bidirectional arcs the same attributes must be stored in the switch
@@ -366,7 +352,6 @@ int C_SHP::SHP_readPolyline(SHPHandle  shpHandle, DBFHandle  dbfHandle, C_IST *I
  * @return 
  */
 int C_SHP::SHP_shrinkNearVertices(C_IST *Ist){
-	//CError error;
 
 	int *v_sorted_vertices, *v_equal_vertex, i, j, nv;
 
@@ -374,7 +359,6 @@ int C_SHP::SHP_shrinkNearVertices(C_IST *Ist){
 	v_equal_vertex = new int[Ist->SHP_num_Vertices];
 	if (v_sorted_vertices == NULL || v_equal_vertex == NULL) {
 		error.fatal("error allocating vectors ", __FUNCTION__);
-		return -1;
 	}
 	for (i = 0; i < Ist->SHP_num_Vertices; i++) { v_sorted_vertices[i] = v_equal_vertex[i] = i; }
 	/* sort the vertex indices vpointers by increasing X and Y coordinates
@@ -390,8 +374,7 @@ int C_SHP::SHP_shrinkNearVertices(C_IST *Ist){
 		if (Ist->v_SHP_Vertices_List[v_sorted_vertices[i]].X > Ist->v_SHP_Vertices_List[v_sorted_vertices[i + 1]].X){//||
 			//fabs(shpVerticesList[vpointers[i]].X - shpVerticesList[vpointers[i+1]].X) < EPS &&
 			//shpVerticesList[vpointers[i]].Y > shpVerticesList[vpointers[i+1]].Y ){
-			cout << "errore ordinamento " << i;
-			exit(0);
+			error.fatal("internal vertices sorting error", __FUNCTION__);
 		}
 	}
 	// sort test end ----
@@ -471,8 +454,7 @@ int C_SHP::SHPcleanMultipleArcs(C_IST *Ist){
 	v_arcs_FS = new int[Ist->SHP_num_Arcs];
 
 	if (v_first_FS == NULL || v_arcs_FS == NULL) {
-		error.fatal("error allocating forward star  ", __FUNCTION__);
-		return -1;
+		error.fatal("error allocating Forward Star  ", __FUNCTION__);
 	}
 
 	// builds a forward star to eliminate multiple arcs
@@ -493,8 +475,6 @@ int C_SHP::SHPcleanMultipleArcs(C_IST *Ist){
 	}
 
 	// here v_first_FS[i] is the pointer to the last arc emanating from i plus 1
-	//for (i = SHP_num_Vertices; i >= 0; i--) // Marco:Apr2016 (errore: copia in v_first_FS[0] il valore v_first_FS[-1]) 
-	//	v_first_FS[i] = v_first_FS[i - 1];
 	for (i = Ist->SHP_num_Vertices; i > 0; i--)
 		v_first_FS[i] = v_first_FS[i - 1];
 	v_first_FS[0] = 0;
@@ -628,8 +608,6 @@ int C_SHP::SHPcleanDegreeZeroAndTwo_function(C_IST *Ist){
 	int *v_vertex_new_pos; /// v_vertex_new_pos[i] = new position in SHP_Vertices_List of vertex originally in position i   
 	int *v_arc_new_pos; /// v_arc_new_pos[i] = new position in SHP_Arcs_List of arc originally in position i]
 	int i, k, nv, na, modified = 0;
-	char buf[100];
-	//CError error;
 
 	v_num_in = new int[Ist->SHP_num_Vertices];
 	v_num_out = new int[Ist->SHP_num_Vertices];
@@ -643,7 +621,6 @@ int C_SHP::SHPcleanDegreeZeroAndTwo_function(C_IST *Ist){
 	if (v_num_in == NULL || v_num_out == NULL || v_first_in == NULL || v_first_out == NULL ||
 		v_second_in == NULL || v_second_out == NULL || v_vertex_new_pos == NULL || v_arc_new_pos == NULL) {
 		error.fatal("error allocating v_xxx ", __FUNCTION__);
-		return -1;
 	}
 	for (i = 0; i < Ist->SHP_num_Vertices; i++) v_num_in[i] = v_num_out[i] = 0;
 	for (i = 0; i < Ist->SHP_num_Vertices; i++) v_first_in[i] = v_first_out[i] = -1;
@@ -673,26 +650,31 @@ int C_SHP::SHPcleanDegreeZeroAndTwo_function(C_IST *Ist){
 	// looks for leaves (a single arc entering or exiting)
 	for (i = 0; i < Ist->SHP_num_Vertices; i++){
 		if (v_num_in[i] == 1 && v_num_out[i] == 0){
-			snprintf(buf, sizeof(buf), "isolated arc in Vertex=%d Arc=#%ld %d %d from %f %f  to %f %f", i, Ist->v_SHP_Arcs_List[v_first_in[i]].info.i_shp_first->index,
+			snprintf(buf, sizeof(buf), "isolated arc in Vertex=%d Arc=%ld %d %d from %f %f  to %f %f", i, Ist->v_SHP_Arcs_List[v_first_in[i]].info.i_shp_first->index,
 				Ist->v_SHP_Arcs_List[v_first_in[i]].from, Ist->v_SHP_Arcs_List[v_first_in[i]].to,
 				Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_in[i]].from].X,
 				Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_in[i]].from].Y,
 				Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_in[i]].to].X,
 				Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_in[i]].to].Y
 				);
-			error.fatal(buf, __FUNCTION__);
-			return -1;
+			error.warning(buf, __FUNCTION__);
 		}
 		if (v_num_in[i] == 0 && v_num_out[i] == 1){
-			snprintf(buf, sizeof(buf), "isolated arc out #%ld", Ist->v_SHP_Arcs_List[v_first_out[i]].info.i_shp_first->index);
+			snprintf(buf, sizeof(buf), "isolated arc out of vertex #%ld, (%lf,%lf)", 
+                                Ist->v_SHP_Arcs_List[v_first_out[i]].info.i_shp_first->index,
+				Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_out[i]].from].X,
+				Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_out[i]].from].Y);                                
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 		if (v_num_in[i] == 1 && v_num_out[i] == 1 && Ist->v_SHP_Arcs_List[v_first_in[i]].from == Ist->v_SHP_Arcs_List[v_first_out[i]].to){
 			// 2 loop. Tho arcs with opposite direction derived from a bidirectional polyline
-			snprintf(buf, sizeof(buf), "isolated line : polyline #%ld in the shapefile", Ist->v_SHP_Arcs_List[v_first_out[i]].info.i_shp_first->index);
+			snprintf(buf, sizeof(buf), "isolated line #%ld in the shapefile (%lf,%lf) /%lf,%lf)",
+                                    Ist->v_SHP_Arcs_List[v_first_out[i]].info.i_shp_first->index,
+                                    Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_out[i]].from].X,
+                                    Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_out[i]].from].Y,                                
+                                    Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_out[i]].to].X,
+                                    Ist->v_SHP_Vertices_List[Ist->v_SHP_Arcs_List[v_first_out[i]].to].Y);                                
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 	}
 	// finds and deletes vertices with degree 2
@@ -830,7 +812,6 @@ int C_SHP::SHPcleanDegreeZeroAndTwo_function(C_IST *Ist){
  */
 int C_SHP::SHPsplit2Loops(C_IST *Ist){
 	int i, j, ia, ia2;
-	//CError error;
 
 	for (ia = 0; ia < Ist->SHP_num_Arcs - 1; ia++){
 		i = Ist->v_SHP_Arcs_List[ia].from;
@@ -841,7 +822,6 @@ int C_SHP::SHPsplit2Loops(C_IST *Ist){
 			// adds 2 vertices
 			if (Ist->SHP_num_Vertices >= SHP_num_Vertices_Dim) {
 				error.fatal("exceeded SHP_num_Vertices_Dim", __FUNCTION__);
-				return -1;
 			}
 			// i prime
 			Ist->v_SHP_Vertices_List[Ist->SHP_num_Vertices] = Ist->v_SHP_Vertices_List[j];
@@ -900,32 +880,29 @@ int C_SHP::SHP_writeShapeFromPath(char *Instance, long narcs, long *arc, int  *i
 	DBFHandle  dbfHandleI, dbfHandleW;
 	int numElements, shpType, iField;
 	double padfMinBound[4], padfMaxBound[4];
-	char buf[100];
+	char filename[100];
 	struct IShape_STR *is;
-	//CError error;
 
 	// open input and output shapefiles
 	shpHandleI = SHPOpen(Ist->networkFileName, "rb");
 	if (shpHandleI == NULL){
-		snprintf(buf, sizeof(buf), "Error opening  SHP file %s\n", Ist->networkFileName);
+		snprintf(buf, sizeof(buf), "opening  SHP file %s\n", Ist->networkFileName);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	dbfHandleI = DBFOpen(Ist->networkFileName, "rb");
 	if (dbfHandleI == NULL){
-		snprintf(buf, sizeof(buf), "Error opening  DBF file %s\n", Ist->networkFileName);
+		snprintf(buf, sizeof(buf), "opening  DBF file %s\n", Ist->networkFileName);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
-	snprintf(buf, sizeof(buf), "%s//%s_Path", OUTPUTDIR, Instance);
-	shpHandleW = SHPCreate(buf, SHPT_ARC);
+	snprintf(filename, sizeof(filename), "%s//%s_Path", OUTPUTDIR, Instance);
+	shpHandleW = SHPCreate(filename, SHPT_ARC);
 	if (shpHandleW == NULL){
-		snprintf(buf, sizeof(buf), "Error to create a SHP file <%s>\n", buf);
+		snprintf(buf, sizeof(buf), "create a SHP file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
 	}
 	dbfHandleW = DBFCloneEmpty(dbfHandleI, buf);
 	if (dbfHandleW == NULL){
-		snprintf(buf, sizeof(buf), "Error to create a DBF file <%s>\n", buf);
+		snprintf(buf, sizeof(buf), "create a DBF file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
 	}
 	DBFAddField(dbfHandleW, (char *) "SEGMENT", FTInteger, 5, 0);
@@ -933,8 +910,6 @@ int C_SHP::SHP_writeShapeFromPath(char *Instance, long narcs, long *arc, int  *i
 	// get general file info
 	SHPGetInfo(shpHandleI, &numElements, &shpType, padfMinBound, padfMaxBound);
 	//
-	// int x;
-	//int from, to;
 	char record[500];
 	const char *cc; cc = &record[0];
 	int n_rec = 0;
@@ -946,19 +921,17 @@ int C_SHP::SHP_writeShapeFromPath(char *Instance, long narcs, long *arc, int  *i
 			int i_shp = is->index;
 			shpObject = SHPReadObject(shpHandleI, i_shp);
 			if (SHPWriteObject(shpHandleW, -1, shpObject) < 0){
-				snprintf(buf, sizeof(buf), "Error writing polyline N. %d\n", i_shp);
+				snprintf(buf, sizeof(buf), "Error writing polyline N. %d in %s", i_shp,filename);
 				error.fatal(buf, __FUNCTION__);
 			}
 			cc = DBFReadTuple(dbfHandleI, i_shp);
 			if (DBFWriteTuple(dbfHandleW, n_rec, (void *)cc) < 0){
-				snprintf(buf, sizeof(buf), "Error writing attributes of polyline N. %d\n", i_shp);
+				snprintf(buf, sizeof(buf), "Error writing attributes of polyline N. %d  in %s", i_shp,filename);
 				error.fatal(buf, __FUNCTION__);
-				return -1;
 			}
 			if (DBFWriteIntegerAttribute(dbfHandleW, n_rec, iField, id[i]) < 0){
-				snprintf(buf, sizeof(buf), "Error writing attributes of SEGMENT polyline N. %d\n", i_shp);
+				snprintf(buf, sizeof(buf), "Error writing attributes of SEGMENT polyline N. %d in %s", i_shp,filename);
 				error.fatal(buf, __FUNCTION__);
-				return -1;
 			}
 			n_rec++;
                          SHPDestroyObject(shpObject);
@@ -971,7 +944,7 @@ int C_SHP::SHP_writeShapeFromPath(char *Instance, long narcs, long *arc, int  *i
 	return 0;
 }
 
-/* creates a copy of a shapefile 
+/* creates a copy of a shapefile : IT IS AN EXAMPLE : DO NOT USE
  * @param filename input name of the file without extension
  */
 int C_SHP::SHP_Copy(char *filename){
@@ -980,30 +953,24 @@ int C_SHP::SHP_Copy(char *filename){
 	DBFHandle  dbfHandle, dbfHandleW;
 	int numElements, shpType;
 	double padfMinBound[4], padfMaxBound[4];
-	char buf[100];
-	//CError error;
 
 	shpHandle = SHPOpen(filename, "rb");
 	if (shpHandle == NULL){
 		snprintf(buf, sizeof(buf), "Error opening  SHP file %s\n", filename);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	dbfHandle = DBFOpen(filename, "rb");
 	if (dbfHandle == NULL){
 		snprintf(buf, sizeof(buf), "Error opening  DBF file %s\n", filename);
-		error.fatal(buf, __FUNCTION__);
-		return -1;
+		error.fatal(buf, __FUNCTION__);;
 	}
 	shpHandleW = SHPCreate("input\\pippo", SHPT_ARC);
 	if (shpHandle == NULL){
 		printf("Error to create a SHP file Write\n");
-		return -1;
 	}
 	dbfHandleW = DBFCloneEmpty(dbfHandle, "input\\pippo");
 	if (dbfHandleW == NULL){
 		printf("Error to create a DBF file Write\n");
-		return -1;
 	}
 	// get general file info
 	SHPGetInfo(shpHandle, &numElements, &shpType, padfMinBound, padfMaxBound);
@@ -1039,7 +1006,6 @@ int C_SHP::SHP_isPointOnArc(SHPHandle  shpHandle, XYPoint_STR p, int i_arc, C_IS
 	char buf[50];
 	Arc_STR *a;
 	IShape_STR *is;
-	//CError error;
 
 	rvalue = 0;
 	// get general file info
@@ -1047,7 +1013,6 @@ int C_SHP::SHP_isPointOnArc(SHPHandle  shpHandle, XYPoint_STR p, int i_arc, C_IS
 	if (shpType != 3){
 		snprintf(buf, sizeof(buf), " - wrong shpfile type %d, mut be 3", shpType);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	if (p.X < padfMinBound[0] || p.X > padfMaxBound[0] ||
 		p.Y < padfMinBound[1] || p.Y > padfMaxBound[1]) {
@@ -1112,7 +1077,7 @@ int C_SHP::SHP_isPointOnSegment(XYPoint_STR p, XYPoint_STR v, XYPoint_STR w, dou
         *offset = t;
 	// here the projection of p is inside the segment !
         *distance = SHPplanarDistance2P(p, projection);
-        if (*distance < shpEPS )  return 1;
+        if (*distance < shpCLOSE )  return 1;
         else              return 0;
 }
 

@@ -574,7 +574,7 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 	fprintf(fin, "%d %c %ld %c \n", Ist->num_Requests, SEP, ndep, SEP);
 
 	// Write vehicle data
-	int kk = CSV_AssignVehicle(Ist, &ivehicle, &ivehiclesched);
+	int kk = CSV_AssignVehicle(Ist, &ivehicle, &ivehiclesched); 
 	if ( kk== -1)
 	{
 		error.fatal("Vehicle not found", __FUNCTION__);

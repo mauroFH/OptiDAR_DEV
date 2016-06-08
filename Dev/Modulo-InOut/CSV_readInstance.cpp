@@ -113,7 +113,6 @@ int C_CSV::CSVsearchRequestId(C_IST *Ist, int Id){
  */
 //@{
 int C_CSV::CSVallocatePoints(int n, C_IST *Ist){
-	//CError error;
 
 	Ist->v_Points = new Point_STR[n];
 	if (Ist->v_Points == NULL) {
@@ -123,7 +122,6 @@ int C_CSV::CSVallocatePoints(int n, C_IST *Ist){
 }
 
 int C_CSV::CSVallocateStopPoints(int n, C_IST *Ist){
-	//CError error;
 
 	Ist->v_StopPoints = new StopPoint_STR[n];
 	if (Ist->v_StopPoints == NULL) {
@@ -133,7 +131,6 @@ int C_CSV::CSVallocateStopPoints(int n, C_IST *Ist){
 }
 
 int C_CSV::CSVallocateParkingPoints(int n, C_IST *Ist){
-	//CError error;
 
 	Ist->v_ParkingPoints = new ParkingPoint_STR[n];
 	if (Ist->v_ParkingPoints == NULL) {
@@ -143,7 +140,6 @@ int C_CSV::CSVallocateParkingPoints(int n, C_IST *Ist){
 }
 
 int C_CSV::CSVallocateTypeOfVehicles(int n,  C_IST *Ist){
-    //CError error;
     
 	Ist->v_TypeOfVehicles = new TypeOfVehicle_STR[n];
     if (Ist->v_TypeOfVehicles == NULL) {
@@ -153,7 +149,6 @@ int C_CSV::CSVallocateTypeOfVehicles(int n,  C_IST *Ist){
 }
 
 int C_CSV::CSVallocateVehicles(int n, C_IST *Ist){
-	//CError error;
 
 	Ist->v_Vehicles = new Vehicle_STR[n];
 	if (Ist->v_Vehicles == NULL) {
@@ -163,7 +158,6 @@ int C_CSV::CSVallocateVehicles(int n, C_IST *Ist){
 }
 
 int C_CSV::CSVallocateVehicleSchedules(int n, C_IST *Ist){
-	//CError error;
 
 	Ist->v_VehicleSchedules = new VehicleSchedule_STR[n];
 	if (Ist->v_VehicleSchedules == NULL) {
@@ -173,7 +167,6 @@ int C_CSV::CSVallocateVehicleSchedules(int n, C_IST *Ist){
 }
 
 int C_CSV::CSVallocateRequests(int n, C_IST *Ist){
-	//CError error;
 
 	Ist->v_Requests = new Request_STR[n];
 	if (Ist->v_Requests == NULL) {
@@ -244,7 +237,6 @@ int C_CSV::CSV_readPoint(char *pointsFileName, char *shapeFileName, C_SHP *mySHP
 	//char word_dummy[CON_MAXNDESCRPOINT];
 	static unsigned char line[512];
 	FILE *inp;
-	//CError error;
 	double FLat, FLong;
 #ifdef LATLONG
 	LatLong Converter;
@@ -255,7 +247,7 @@ int C_CSV::CSV_readPoint(char *pointsFileName, char *shapeFileName, C_SHP *mySHP
 	numRec = CSV_contaRec(inp);
 	if (numRec < 1)
 	{
-		snprintf(buf, sizeof(buf), "Empty file = %s ", pointsFileName);
+		snprintf(buf, sizeof(buf), "no point: empty file  %s ", pointsFileName);
 		error.fatal(buf, __FUNCTION__);;
 	}
 	l = (numRec - 1);
@@ -311,6 +303,9 @@ int C_CSV::CSV_readPoint(char *pointsFileName, char *shapeFileName, C_SHP *mySHP
 		if (mySHP->SHP_Point2FS(Ist->v_Points[Ist->num_Points].P, Right, &i_arc, &offset, Ist) < 0) {
 			Ist->v_Points[Ist->num_Points].i_arc = -1;
 			Ist->v_Points[Ist->num_Points].offset = -999;
+                        snprintf(buf, sizeof(buf),"Cannot allocate point Id=%d (%lf,%lf) to an arc",
+                                Ist->v_Points[Ist->num_Points].PointId,XX,YY);
+                        error.warning(buf, __FUNCTION__);
 		}
 		else{
 			Ist->v_Points[Ist->num_Points].i_arc = i_arc;
@@ -347,14 +342,13 @@ int C_CSV::CSV_readStopPoint(char *FileName, C_IST *Ist){
 	unsigned char *p, word[CON_MAXNDESCRSTOPPOINT];
 	static unsigned char line[512];
 	FILE *inp;
-	//CError error;
 
 	// Open and counts the records
 	inp = CSV_ApriFile(FileName, (char *) "r");
 	numRec = CSV_contaRec(inp);
 	if (numRec < 1)
 	{
-		snprintf(buf, sizeof(buf), "Empty file = %s ", FileName);
+		snprintf(buf, sizeof(buf), "stop points: empty file %s ", FileName);
 		error.fatal(buf, __FUNCTION__);
 	}
 	l = (numRec - 1);
@@ -421,14 +415,13 @@ int C_CSV::CSV_readParkingPoint(char *FileName, C_SHP * mySHP, C_IST *Ist){
 	unsigned char *p, word[CON_MAXNDESCRSTOPPOINT];
 	static unsigned char line[512];
 	FILE *inp;
-	//CError error;
 
 	// Open and counts the records
 	inp = CSV_ApriFile(FileName, (char *) "r");
 	numRec = CSV_contaRec(inp);
 	if (numRec < 1)
 	{
-		snprintf(buf, sizeof(buf), "Empty file = %s ", FileName);
+		snprintf(buf, sizeof(buf), "parking points: empty file  %s ", FileName);
 		error.fatal(buf, __FUNCTION__);
 	}
 	l = (numRec - 1);
@@ -514,13 +507,11 @@ int C_CSV::CSV_readParkingPoint(char *FileName, C_SHP * mySHP, C_IST *Ist){
 */
 int C_CSV::CSV_readParkingPointCapacity(char *FileName, C_SHP *mySHP, C_IST *Ist){
 	long numRec;
-	//long l;
 	int i, id, numFields;
-	//int ip;
 	unsigned char *p, word[CON_MAXNDESCRPARKINGPOINT];
 	static unsigned char line[512];
 	FILE *inp;
-	//CError error;
+
 
 	// Open and counts the records
 	inp = CSV_ApriFile(FileName, (char *) "r");
@@ -583,18 +574,17 @@ int C_CSV::CSV_readParkingPointCapacity(char *FileName, C_SHP *mySHP, C_IST *Ist
 int C_CSV::CSV_readTypeOfVehicle(char *FileName, C_SHP *mySHP, C_IST *Ist){
 	long numRec, l;
 	int i, numFields;
-	//int id;
 	unsigned char *p, word[CON_MAXNDESCRTOV];
 	static unsigned char line[512];
 	FILE *inp;
-	//CError error;
+
 
 	// Open and counts the records
 	inp = CSV_ApriFile(FileName, (char *) "r");
 	numRec = CSV_contaRec(inp);
 	if (numRec < 1)
 	{
-		snprintf(buf, sizeof(buf), "Empty file = %s ", FileName);
+		snprintf(buf, sizeof(buf), "type of vehicle: Empty file  %s ", FileName);
 		error.fatal(buf, __FUNCTION__);
 	}
 	l = (numRec - 1);
@@ -651,14 +641,13 @@ int C_CSV::CSV_readVehicle(char *FileName, C_SHP *mySHP, C_IST *Ist){
 	unsigned char *p, word[CON_MAXNDESCRVEHICLE];
 	static unsigned char line[512];
 	FILE *inp;
-	//CError error;
 
 	// Open and counts the records
 	inp = CSV_ApriFile(FileName, (char *) "r");
 	numRec = CSV_contaRec(inp);
 	if (numRec < 1)
 	{
-		snprintf(buf, sizeof(buf), "Empty file = %s ", FileName);
+		snprintf(buf, sizeof(buf), "vehicle : empty file  %s ", FileName);
 		error.fatal(buf, __FUNCTION__);
 	}
 	l = (numRec - 1);
@@ -748,15 +737,14 @@ int C_CSV::CSV_readVehicleSchedule(char *FileName, C_SHP *mySHP, C_IST *Ist){
 	unsigned char *p, word[CON_MAXNDESCRVEHICLE];
 	static unsigned char line[512];
 	FILE *inp;
-	//CError error;
 
 	// Open and counts the records
 	inp = CSV_ApriFile(FileName, (char *) "r");
 	numRec = CSV_contaRec(inp);
 	if (numRec < 1)
 	{
-		snprintf(buf, sizeof(buf), "Empty file = %s ", FileName);
-		error.fatal(buf, __FUNCTION__);
+		snprintf(buf, sizeof(buf), "vehicle schedule : empty file  %s ", FileName);
+		error.fatal(buf, __FUNCTION__); 
 	}
 	l = (numRec - 1);
 	CSVallocateVehicleSchedules(l, Ist);
@@ -842,15 +830,15 @@ int C_CSV::CSV_readRequest(char *FileName, C_SHP *mySHP, C_IST *Ist){
 	unsigned char *p, word[CON_MAXNDESCRREQUEST];
 	static unsigned char line[512];
 	FILE *inp;
-	//CError error;
 
 	// Open and counts the records
 	inp = CSV_ApriFile(FileName, (char *) "r");
 	numRec = CSV_contaRec(inp);
 	if (numRec < 1)
 	{
-		snprintf(buf, sizeof(buf), "Empty file = %s ", FileName);
-		error.fatal(buf, __FUNCTION__);
+		snprintf(buf, sizeof(buf), "request : empty file = %s ", FileName);
+		error.warning(buf, __FUNCTION__);
+                return 0;
 	}
 	l = (numRec - 1);
 	CSVallocateRequests(l, Ist);
@@ -987,7 +975,6 @@ int C_CSV::CSV_readRequestAddress(char *FileName, C_SHP *mySHP, C_IST *Ist){
 	unsigned char *p, word[CON_MAXNDESCRREQUEST];
 	static unsigned char line[512];
 	FILE *inp;
-	//CError error;
 
 	// Open and counts the records
 	inp = CSV_ApriFile(FileName, (char *) "r");
@@ -1099,16 +1086,16 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 	fin = fopen(FileName, "r");
 	if (fin == NULL)
 	{
-		error.fatal("File cannot be opened", __FUNCTION__);
-		return(-1);
+            snprintf(buf,sizeof(buf),"File %s cannot be opened",FileName);
+            error.fatal(buf, __FUNCTION__);
 	}
 
 	// Counts the records
 	numRec = CSV_contaRec(fin);
 	if (numRec < 1)
 	{
-		error.fatal("No record, the file is empty", __FUNCTION__);
-		return(-1);
+            snprintf(buf,sizeof(buf),"setup file %s is empty",FileName);
+            error.fatal(buf, __FUNCTION__);
 	}
 
 	// riposiziona il file in testa
@@ -1132,7 +1119,6 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
 			snprintf(buf, sizeof(buf), "Record = %ld field %d not found", numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
-			return(-1);
 		};
 		memcpy(buf, word, CON_MAXNSTR);
 		if (strncmp(buf, "RouteId", 7) == 0)
@@ -1147,14 +1133,12 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 		{
 			ipar = -1;
 			error.fatal("Parameter not recognized", __FUNCTION__);
-			return(-1);
 		}
 
 		//////// Value
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
 			snprintf(buf, sizeof(buf), "Record = %ld field %d not found", numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
-			return(-1);
 		};
 		if (CSVnonIntero(word))	{
 			snprintf(buf, sizeof(buf), "Record = %ld field %d not an integer = %s", numRec, numFields, word);
@@ -1166,7 +1150,6 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 		if (i < 0)	{
 			snprintf(buf, sizeof(buf), "Record = %ld field %d negative = %ld", numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
-			return(-1);
 		}
 		if (ipar == 0)
 		{
@@ -1179,7 +1162,6 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 		else
 		{
 			error.fatal("Parameter not recognized", __FUNCTION__);
-			return(-1);
 		}
 
 		konta++;
@@ -1214,16 +1196,16 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 	fin = fopen(FileName, "r");
 	if (fin == NULL)
 	{
-		error.fatal("File cannot be opened", __FUNCTION__);
-		return(-1);
+            snprintf(buf,sizeof(buf),"File %s cannot be opened",FileName);            
+            error.fatal(buf, __FUNCTION__);
 	}
 
 	// Counts the records
 	numRec = CSV_contaRec(fin);
 	if (numRec < 1)
 	{
-		error.fatal("No record, the file is empty", __FUNCTION__);
-		return(-1);
+            snprintf(buf,sizeof(buf),"parameter file %s empty",FileName);            
+		error.fatal(buf, __FUNCTION__);
 	}
 
 	// riposiziona il file in testa
@@ -1247,7 +1229,6 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
 			snprintf(buf, sizeof(buf), "Record = %ld field %d not found", numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
-			return(-1);
 		};
 		memcpy(buf, word, CON_MAXNSTR);
 		if (strncmp(buf, "PathType", 8) == 0)
@@ -1262,26 +1243,22 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 		{
 			ipar = -1;
 			error.fatal("Parameter not recognized", __FUNCTION__);
-			return(-1);
 		}
 
 		//////// Value
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
 			snprintf(buf, sizeof(buf), "Record = %ld field %d not found", numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
-			return(-1);
 		};
 		if (CSVnonIntero(word))	{
 			snprintf(buf, sizeof(buf), "Record = %ld field %d not an integer = %s", numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
-			return(-1);
 		}
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
 		sscanf(word_dummy, "%ld", &i);
 		if (i < 0)	{
 			snprintf(buf, sizeof(buf), "Record = %ld field %d negative = %ld", numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
-			return(-1);
 		}
 		if (ipar == 0)
 		{
@@ -1294,7 +1271,6 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 		else
 		{
 			error.fatal("Parameter not recognized", __FUNCTION__);
-			return(-1);
 		}
 
 		konta++;

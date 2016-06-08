@@ -60,13 +60,11 @@ void C_CSV::CSV_DeAllocateMatrixDT_and_C(C_IST *Ist)
 
 FILE *C_CSV::CSV_ApriFile(char *name, char *modo)
 {
-	//CError error;
 	FILE *dummy;
-	char *NomeProc = (char *) "CSV_ApriFile";
 	char buf[100];
 	// commento interno (a due barre) che non viene riportato da doc++
 	if ((dummy = fopen(name, modo)) == NULL) {
-		snprintf(buf, sizeof(buf), "%s: Error opening file = %s", NomeProc, name);
+		snprintf(buf, sizeof(buf), " opening file  %s", name);
 		error.fatal(buf, __FUNCTION__);
 	}
 	return dummy;
@@ -122,9 +120,7 @@ long C_CSV::CSV_contaRec(FILE *inp)
 int C_CSV::CSV_getWord(int numRec, int *numFields, unsigned char **p, unsigned char *w)
 {
 	int i;
-	char *NomeProc = (char *) "CSV_getWord";
 	char buf[100];
-	//CError error;
 	(*numFields)++;
 	/*
 
@@ -157,7 +153,7 @@ int C_CSV::CSV_getWord(int numRec, int *numFields, unsigned char **p, unsigned c
 	while (**p != CON_PUNTOEVIRGOLA && **p != '\0')   { w[i++] = **p; (*p)++; }
 	w[i] = '\0';
 	if (**p != CON_PUNTOEVIRGOLA && **p != '\0') {
-		snprintf(buf, sizeof(buf), "Error %s : record %d campo %d", NomeProc, numRec, *numFields);
+		snprintf(buf, sizeof(buf), "record %d campo %d", numRec, *numFields);
 		error.fatal(buf, __FUNCTION__);
 		return(-1);
 	}
@@ -251,7 +247,6 @@ bool C_CSV::CSV_readBool(int numRec, int *numFields, unsigned char **p)
 	char word_dummy[CON_MAXNDESCRSTOPPOINT];
 	int i;
 	bool b;
-	//CError error;
 
 	if ((i = CSV_getWord(numRec, numFields, p, word)) < 0) {
 		snprintf(buf, sizeof(buf), "Record = %d field %d not found", numRec, *numFields);
@@ -285,7 +280,6 @@ int C_CSV::CSV_readInt(int numRec, int *numFields, unsigned char **p, int LB, in
 	unsigned char word[CON_MAXNDESCRSTOPPOINT];
 	char word_dummy[CON_MAXNDESCRSTOPPOINT];
 	int i;
-	//CError error;
 
 	if ((i = CSV_getWord(numRec, numFields, p, word)) < 0) {
 		snprintf(buf, sizeof(buf), "Record = %d field %d not found", numRec, *numFields);
@@ -323,7 +317,6 @@ int C_CSV::CSV_readInt_NULL(int numRec, int *numFields, unsigned char **p, int L
 	unsigned char word[CON_MAXNDESCRSTOPPOINT];
 	char word_dummy[CON_MAXNDESCRSTOPPOINT];
 	int i;
-	//CError error;
 
 	if ((i = CSV_getWord(numRec, numFields, p, word)) < 0) {
 		snprintf(buf, sizeof(buf), "Record = %d field %d not found", numRec, *numFields);
@@ -365,7 +358,6 @@ double C_CSV::CSV_readReal(int numRec, int *numFields, unsigned char **p, double
 	int i;
 	double d;
 
-	//CError error;
 
 	if ((i = CSV_getWord(numRec, numFields, p, word)) < 0) {
 		snprintf(buf, sizeof(buf), "Record = %d field %d not found", numRec, *numFields);
@@ -398,7 +390,6 @@ double C_CSV::CSV_readReal(int numRec, int *numFields, unsigned char **p, double
 void C_CSV::CSV_readString(int numRec, int *numFields, unsigned char **p, unsigned char *word)
 {
 	int i;
-	//CError error;
 
 	if ((i = CSV_getWord(numRec, numFields, p, word)) < 0) {
 		snprintf(buf, sizeof(buf), "Record = %d field %d not found", numRec, *numFields);

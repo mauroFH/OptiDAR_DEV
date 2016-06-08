@@ -74,15 +74,14 @@ double  C_SHP::SHPminimum_distanceP2Segment(XYPoint_STR v, XYPoint_STR w, XYPoin
  * @param shpObject input handle of the shapefile object to be examined
  * @param i_SHP_index input index of the polyline to be analyzed
  * @param p input Point to be evaluated
- * @return 1 if the point is "far" from the bounding box of the polyline, 0 otherwise, but -1 if ana error occurs
+ * @return 1 if the point is "far" from the bounding box of the polyline, 0 otherwise
  */
 int C_SHP::SHPpointOutsideBox(SHPObject *shpObject, int i_SHP_index, XYPoint_STR p){
-	float CLOSE = 4;
 
-	if (p.X + CLOSE < shpObject->dfXMin) return 1;
-	if (p.X > CLOSE + shpObject->dfXMax) return 1;
-	if (p.Y + CLOSE < shpObject->dfYMin) return 1;
-	if (p.Y > CLOSE + shpObject->dfYMax) return 1;
+	if (p.X < shpObject->dfXMin - shpCLOSE) return 1;
+	if (p.X > shpCLOSE + shpObject->dfXMax) return 1;
+	if (p.Y  < shpObject->dfYMin - shpCLOSE) return 1;
+	if (p.Y > shpCLOSE + shpObject->dfYMax) return 1;
 	return 0;
 }
 
@@ -107,13 +106,11 @@ double C_SHP::SHPdistancePointPolyline(SHPHandle  shpHandle, DBFHandle dbfHandle
 	double distance, length, offset, segment_length; // working  variables
 	double min_distance;     // minimum distance from p to the polyline
 	int  i_v1, last_j;
-	//CError error;
 
 	shpObject = SHPReadObject(shpHandle, is->index);
 	if (shpObject == NULL){
 		snprintf(buf, sizeof(buf), " cannot  read polyline  %ld ", is->index);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	// if the point is far from the polyline return -999
 	if (SHPpointOutsideBox(shpObject, is->index, p) > 0)  return -999;
@@ -226,20 +223,17 @@ double C_SHP::SHP_Point2FS(XYPoint_STR p, bool RightLeft, int *i_arc, double *mi
 	double distance, min_distance, l_offset; // l_offset is a distanced, min_offset is a percentage
 	char buf[100];
 	Arc_STR *a;
-	//CError error;
 
 	if (Ist->num_ArcsFS <= 0) return -1;
 	shpHandle = SHPOpen(Ist->networkFileName, "rb");
 	if (shpHandle == NULL){
-		snprintf(buf, sizeof(buf), "Error opening  SHP file %s\n", Ist->networkFileName);
+		snprintf(buf, sizeof(buf), "opening  SHP file %s", Ist->networkFileName);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	dbfHandle = DBFOpen(Ist->networkFileName, "rb");
 	if (dbfHandle == NULL){
-		snprintf(buf, sizeof(buf), "Error opening  DBF file %s\n", Ist->networkFileName);
+		snprintf(buf, sizeof(buf), "opening  DBF file %s", Ist->networkFileName);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	min_distance = -1; *min_offset = 0;
 	for (int k = 0; k < Ist->num_ArcsFS; k++){
@@ -257,76 +251,6 @@ double C_SHP::SHP_Point2FS(XYPoint_STR p, bool RightLeft, int *i_arc, double *mi
 	if (min_distance < 0) return -1;
 	return 0;
 }
-
-/*
-int C_SHP::SHP_readAndBuildPoints(char *filename){
-    char NomeProc[] = "C_SHP::SHPreadAndBuildPoints";
-    
-    SHPHandle  shpHandle;
-    DBFHandle  dbfHandle;
-    int shpType, shpNumElements, shpNumPoints;
-    char buf[100];
-    CError error;
-    
-
-    SHP_myopen(filename, &shpHandle, &dbfHandle, &shpType, &shpNumElements, &shpNumPoints);
-    if (shpType!= 1) {
-        error.fatal(" - this procedure read only type 1 shapefiles (point)", __FUNCTION__);
-        exit(0);
-    }
-    // allocate memory 
-    v_SHP_Points_List = new XYPoint_STR [shpNumPoints];
-    if (v_SHP_Points_List == NULL) {
-        snprintf(buf,sizeof(buf),"- too much vertices %d; cannnot allocate shpVerticesList ",shpNumPoints);
-        error.fatal(buf, __FUNCTION__);
-        return -1;
-    }
-    SHP_num_Points_Dim = shpNumPoints;
-    //
-    SHPreadPoints(shpHandle, dbfHandle);
-    //MM->printlists(this);
-    //
-    return 0;
-}
- * reads the point from a shapefile of type 1
- * @param shpHandle input = handle to an opened shapefile
- * @param dbfHandle input = handle to an opened dbf
- * @return 0 or < 0 if an error occurs
-
-int C_SHP::SHPreadPoints(SHPHandle  shpHandle, DBFHandle  dbfHandle){
-    char   buf[250];
-    double padfMinBound[4], padfMaxBound[4]; // dummy
-    int i,shpType,numElements, np, na;
-    SHPObject *shpObject;
-    CError error;
-    
-    // get general file info
-    SHPGetInfo(shpHandle, &numElements, &shpType, padfMinBound, padfMaxBound);
-    if (shpType != 1){
-        snprintf(buf,sizeof(buf)," - wrong shpfile type %d",shpType);
-        error.fatal(buf, __FUNCTION__);
-        return -1;  
-    }
-    np = na = 0;
-    for (i = 0; i < numElements; i++){
-        // the Obj type is a Point (id = 1))
-        shpObject = SHPReadObject(shpHandle, i);
-        if (np+1 >= SHP_num_Vertices_Dim ){
-             snprintf(buf,sizeof(buf)," - too much vertices reading element  %d ",i);
-             error.fatal(buf, __FUNCTION__);
-             return -1;  
-        } 
-        v_SHP_Points_List[np].X = shpObject->padfX[0];
-        v_SHP_Points_List[np].Y = shpObject->padfY[0];
-        np++;
-        SHPDestroyObject(shpObject);
-    } 
-    // set global variables
-    SHP_num_Points = np ;
-    return 0;
-}
-*/
-
 /**
  * Given a set of stops, creates a shapefile conatining the  corresponding points
  * 
@@ -334,14 +258,10 @@ int C_SHP::SHPreadPoints(SHPHandle  shpHandle, DBFHandle  dbfHandle){
  * @return 
  */
 int C_SHP::SHP_writeShapeStopPoints(char *Instance, C_IST *Ist){
-	char   NomeProc[] = "C_SHP::SHPwriteShapeStops";
 	SHPHandle  shpHandleW;
 	SHPObject shpObject;
 	DBFHandle  dbfHandleW;
-	//CError error;
-	//int numElements, shpType;
-	//double padfMinBound[4], padfMaxBound[4];
-	char buf[100];
+	char filename[100];
 
 	shpObject.padfX = new double[1];
 	shpObject.padfY = new double[1];
@@ -349,18 +269,16 @@ int C_SHP::SHP_writeShapeStopPoints(char *Instance, C_IST *Ist){
 	shpObject.padfM = new double[1];
 
 	// open  output shapefiles
-	snprintf(buf, sizeof(buf), "%s//%s_StopPoints", OUTPUTDIR, Instance);
-	shpHandleW = SHPCreate(buf, SHPT_POINT);
+	snprintf(filename, sizeof(filename), "%s//%s_StopPoints", OUTPUTDIR, Instance);
+	shpHandleW = SHPCreate(filename, SHPT_POINT);
 	if (shpHandleW == NULL){
-		snprintf(buf, sizeof(buf), "Error to create a SHP file <%s>\n", buf);
+		snprintf(buf, sizeof(buf), "creating SHP file <%s>", filename);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
-	dbfHandleW = DBFCreate(buf);
+	dbfHandleW = DBFCreate(filename);
 	if (dbfHandleW == NULL){
-		snprintf(buf, sizeof(buf), "Error to create a DBF file <%s>\n", buf);
+		snprintf(buf, sizeof(buf), "creating DBF file <%s>", filename);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	DBFAddField(dbfHandleW, (char *) "id", FTInteger, 15, 0);
 	DBFAddField(dbfHandleW, (char *) "Cod", FTString, CON_MAXNCODSTOPPOINT, 1);
@@ -374,19 +292,16 @@ int C_SHP::SHP_writeShapeStopPoints(char *Instance, C_IST *Ist){
 		shpObject.padfY[0] = shpObject.dfYMin = shpObject.dfYMax = Ist->v_Points[Ist->v_StopPoints[i].i_Point].P.Y;
 		shpObject.padfZ[0] = shpObject.padfM[0] = 0;
 		if (SHPWriteObject(shpHandleW, -1, &shpObject) < 0){
-			snprintf(buf, sizeof(buf), "Error %s: writing point  N. %d\n", NomeProc, i);
+			snprintf(buf, sizeof(buf), "writing point  N. %d in %s", i,filename);
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 		if (DBFWriteIntegerAttribute(dbfHandleW, i, 0, i) < 0){
-			snprintf(buf, sizeof(buf), "Error %s: writing 'id' dbf point  N. %d\n", NomeProc, i);
+			snprintf(buf, sizeof(buf), "writing 'id' dbf point  N. %d in %s",i,filename);
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 		if (DBFWriteStringAttribute(dbfHandleW, i, 1, (char *)Ist->v_StopPoints[i].Cod) < 0){
-			snprintf(buf, sizeof(buf), "Error %s: writing 'Cod' in dbf point  N. %d\n", NomeProc, i);
+			snprintf(buf, sizeof(buf), "writing 'Cod' in dbf point  N. %d in %s", i, filename);
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 	}// for i
 	delete[] shpObject.padfX;
@@ -408,10 +323,7 @@ int C_SHP::SHP_writeShapeParkingPoints(char *Instance, C_IST *Ist){
 	SHPHandle  shpHandleW;
 	SHPObject shpObject;
 	DBFHandle  dbfHandleW;
-	//CError error;
-	//int numElements, shpType;
-	//double padfMinBound[4], padfMaxBound[4];
-	char buf[100];
+	char filename[100];
 
 	shpObject.padfX = new double[1];
 	shpObject.padfY = new double[1];
@@ -419,18 +331,16 @@ int C_SHP::SHP_writeShapeParkingPoints(char *Instance, C_IST *Ist){
 	shpObject.padfM = new double[1];
 
 	// open  output shapefiles
-	snprintf(buf, sizeof(buf), "%s//%s_ParkingPoints", OUTPUTDIR, Instance);
-	shpHandleW = SHPCreate(buf, SHPT_POINT);
+	snprintf(filename, sizeof(filename), "%s//%s_ParkingPoints", OUTPUTDIR, Instance);
+	shpHandleW = SHPCreate(filename, SHPT_POINT);
 	if (shpHandleW == NULL){
-		snprintf(buf, sizeof(buf), "Error to create a SHP file <%s>\n", buf);
+		snprintf(buf, sizeof(buf), "create a SHP file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
-	dbfHandleW = DBFCreate(buf);
+	dbfHandleW = DBFCreate(filename);
 	if (dbfHandleW == NULL){
-		snprintf(buf, sizeof(buf), "Error to create a DBF file <%s>\n", buf);
+		snprintf(buf, sizeof(buf), "create a DBF file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	DBFAddField(dbfHandleW, (char *) "id", FTInteger, 15, 0);
 	DBFAddField(dbfHandleW, (char *) "Cod", FTString, CON_MAXNCODSTOPPOINT, 1);
@@ -444,17 +354,15 @@ int C_SHP::SHP_writeShapeParkingPoints(char *Instance, C_IST *Ist){
 		shpObject.padfY[0] = shpObject.dfYMin = shpObject.dfYMax = Ist->v_Points[Ist->v_ParkingPoints[i].i_Point].P.Y;
 		shpObject.padfZ[0] = shpObject.padfM[0] = 0;
 		if (SHPWriteObject(shpHandleW, -1, &shpObject) < 0){
-			snprintf(buf, sizeof(buf), "writing point  N. %d\n", i);
+			snprintf(buf, sizeof(buf), "writing point  N. %d in %s", i,filename);
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 		if (DBFWriteIntegerAttribute(dbfHandleW, i, 0, i) < 0){
-			snprintf(buf, sizeof(buf), " writing 'id' dbf point  N. %d\n", i);
+			snprintf(buf, sizeof(buf), " writing 'id' dbf point  N. %d in %s", i,filename);
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 		if (DBFWriteStringAttribute(dbfHandleW, i, 1, (char *)Ist->v_ParkingPoints[i].Cod) < 0){
-			snprintf(buf, sizeof(buf), "writing 'Cod' in dbf point  N. %d\n", i);
+			snprintf(buf, sizeof(buf), "writing 'Cod' in dbf point  N. %d in %s", i, filename);
 			error.fatal(buf, __FUNCTION__);
 
 		}
@@ -479,15 +387,11 @@ int C_SHP::SHP_writeShapeFromWaypoints(char *Instance){
 	SHPObject  shpObject;
 	DBFHandle  dbfHandleW;
 	FILE *inp;
-	//CError error;
-	//int numElements, shpType;
-	//double padfMinBound[4], padfMaxBound[4];
 	long numRec;
-	//long l;
-	//int id;
 	int i, numFields;
 	unsigned char *p, word[CON_MAXNDESCRSTOPPOINT];
 	static unsigned char line[512];
+        char filename[100];
 	XYPoint_STR P;
 	register C_CSV myCSV;
 
@@ -497,15 +401,15 @@ int C_SHP::SHP_writeShapeFromWaypoints(char *Instance){
 	shpObject.padfM = new double[1];
 
 	// open  output shapefiles
-	snprintf(buf, sizeof(buf), "%s//%s_Waypoint", OUTPUTDIR, Instance);
+	snprintf(filename, sizeof(filename), "%s//%s_Waypoint", OUTPUTDIR, Instance);
 	shpHandleW = SHPCreate(buf, SHPT_POINT);
 	if (shpHandleW == NULL){
-		snprintf(buf, sizeof(buf), "Error to create a SHP file <%s>\n", buf);
+		snprintf(buf, sizeof(buf), "Error to create a SHP file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
 	}
 	dbfHandleW = DBFCreate(buf);
 	if (dbfHandleW == NULL){
-		snprintf(buf, sizeof(buf), "Error to create a DBF file <%s>\n", buf);
+		snprintf(buf, sizeof(buf), "Error to create a DBF file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
 	}
 	DBFAddField(dbfHandleW, (char *) "id", FTInteger, 15, 0);
@@ -520,7 +424,7 @@ int C_SHP::SHP_writeShapeFromWaypoints(char *Instance){
 	// Inizio lettura
 	int shpRec = 0;
 	numRec = 0;
-	myCSV.CSV_LeggiRec(inp, &numRec, (unsigned char *)line); // first record contains headings
+	//myCSV.CSV_LeggiRec(inp, &numRec, (unsigned char *)line); // first record contains headings
 	while (!feof(inp)){
 		line[0] = '\0';
 		myCSV.CSV_LeggiRec(inp, &numRec, (unsigned char *)line);
@@ -539,16 +443,15 @@ int C_SHP::SHP_writeShapeFromWaypoints(char *Instance){
 		shpObject.padfY[0] = shpObject.dfYMin = shpObject.dfYMax = P.Y;
 		shpObject.padfZ[0] = shpObject.padfM[0] = 0;
 		if (SHPWriteObject(shpHandleW, -1, &shpObject) < 0){
-			snprintf(buf, sizeof(buf), "writing point  N. %d\n", i);
+			snprintf(buf, sizeof(buf), "writing point  N. %d in %s", i,filename);
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 		if (DBFWriteIntegerAttribute(dbfHandleW, shpRec, 0, shpRec) < 0){
-			snprintf(buf, sizeof(buf), " writing 'id' dbf point  N. %d\n", 99);
+			snprintf(buf, sizeof(buf), " writing 'id' dbf point  N. %d in %s", 99, filename);
 			error.fatal(buf, __FUNCTION__);
 		}
 		if (DBFWriteStringAttribute(dbfHandleW, shpRec++, 1, (char *) "codice ") < 0){
-			snprintf(buf, sizeof(buf), " writing 'Cod' in dbf point  N. %d\n", i);
+			snprintf(buf, sizeof(buf), " writing 'Cod' in dbf point  N. %d in %s", i,filename);
 			error.fatal(buf, __FUNCTION__);
 		}
 	}// while
@@ -572,10 +475,7 @@ int C_SHP::SHP_writeShapeRequests(char *Instance, C_IST *Ist){
 	SHPHandle  shpHandleW;
 	SHPObject  shpObject;
 	DBFHandle  dbfHandleW;
-	//FILE *inp;
-	//CError error;
-	//int numElements, shpType;
-	//double padfMinBound[4], padfMaxBound[4];
+        char filename[100];
 	int i, iField;
 	XYPoint_STR P;
 	register C_CSV myCSV;
@@ -587,15 +487,15 @@ int C_SHP::SHP_writeShapeRequests(char *Instance, C_IST *Ist){
 	shpObject.padfM = new double[1];
 
 	// open  output shapefiles
-	snprintf(buf, sizeof(buf), "%s//%s_Requests", OUTPUTDIR, Instance);
+	snprintf(filename, sizeof(filename), "%s//%s_Requests", OUTPUTDIR, Instance);
 	shpHandleW = SHPCreate(buf, SHPT_POINT);
 	if (shpHandleW == NULL){
-		snprintf(buf, sizeof(buf), "Error to create a SHP file <%s>\n", buf);
+		snprintf(buf, sizeof(buf), "create a SHP file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
 	}
 	dbfHandleW = DBFCreate(buf);
 	if (dbfHandleW == NULL){
-		snprintf(buf, sizeof(buf), "Error to create a DBF file <%s>\n", buf);
+		snprintf(buf, sizeof(buf), "create a DBF file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
 	}
 	DBFAddField(dbfHandleW, (char *) "id", FTInteger, 15, 0);
@@ -612,19 +512,18 @@ int C_SHP::SHP_writeShapeRequests(char *Instance, C_IST *Ist){
 		shpObject.padfY[0] = shpObject.dfYMin = shpObject.dfYMax = P.Y;
 		shpObject.padfZ[0] = shpObject.padfM[0] = 0;
 		if (SHPWriteObject(shpHandleW, -1, &shpObject) < 0){
-			snprintf(buf, sizeof(buf), "writing point  N. %d\n", i);
+			snprintf(buf, sizeof(buf), "writing point  N. %d in %s", i, filename);
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 		iField = 0;
 		if (DBFWriteIntegerAttribute(dbfHandleW, shpRec, iField++, Ist->v_Requests[i].RequestId) < 0){
-			snprintf(buf, sizeof(buf), " writing 'id' dbf point  N. %d\n", 99);
+			snprintf(buf, sizeof(buf), " writing 'id' dbf point  N. %d in %s", 99,filename);
 			error.fatal(buf, __FUNCTION__);
 		}
 		snprintf(buf, sizeof(buf), "Pick%d-%s", Ist->v_Requests[i].RequestId,
 			Ist->v_StopPoints[Ist->v_Requests[i].i_pickup_stop].Cod);
 		if (DBFWriteStringAttribute(dbfHandleW, shpRec++, iField++, buf) < 0){
-			snprintf(buf, sizeof(buf), " writing P 'Cod' in dbf point  N. %d\n", i);
+			snprintf(buf, sizeof(buf), " writing P 'Cod' in dbf point  N. %d in %s", i,filename);
 			error.fatal(buf, __FUNCTION__);
 		}
 		// dropoff
@@ -635,17 +534,16 @@ int C_SHP::SHP_writeShapeRequests(char *Instance, C_IST *Ist){
 		if (SHPWriteObject(shpHandleW, -1, &shpObject) < 0){
 			snprintf(buf, sizeof(buf), "writing point  N. %d\n", i);
 			error.fatal(buf, __FUNCTION__);
-			return -1;
 		}
 		iField = 0;
 		if (DBFWriteIntegerAttribute(dbfHandleW, shpRec, iField++, Ist->v_Requests[i].RequestId) < 0){
-			snprintf(buf, sizeof(buf), " writing 'id' dbf point  N. %d\n", 99);
+			snprintf(buf, sizeof(buf), " writing 'id' dbf point  N. %d in %s", 99,filename);
 			error.fatal(buf, __FUNCTION__);
 		}
 		snprintf(buf, sizeof(buf), "Drop%d-%s", Ist->v_Requests[i].RequestId,
 			Ist->v_StopPoints[Ist->v_Requests[i].i_dropoff_stop].Cod);
 		if (DBFWriteStringAttribute(dbfHandleW, shpRec++, iField++, buf) < 0){
-			snprintf(buf, sizeof(buf), " writing D 'Cod' in dbf point  N. %d\n", i);
+			snprintf(buf, sizeof(buf), " writing D 'Cod' in dbf point  N. %d in %s", i,filename);
 			error.fatal(buf, __FUNCTION__);
 		}
 	}// while

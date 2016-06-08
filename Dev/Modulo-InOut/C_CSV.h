@@ -69,10 +69,8 @@ public:
 
 	int     CVS_writeSetup(C_IST *Ist);
 	int     CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance);
-	//int CSVwriteWaypointsFirstArc(SHPHandle shpHandle, ofstream fout, int *WaypointId, int *PointOrder, XYPoint_STR *p, C_IST *Ist);  // Marco:21apr
 	int     CSV_writeWaypointsFirstArc(SHPHandle shpHandle, ofstream *fout, int *WaypointId, int SolutionId,
 		int VehicleID, int *PointOrder, int RoutePointId, int RouteID, XYPoint_STR *p, C_SHP *mySHP, C_IST *Ist);
-	//int CSVwriteWaypointsLasttArc(SHPHandle shpHandle, ofstream fout, XYPoint_STR *p, C_IST *Ist);
 	void    CSV_writeWaypointsRow(ofstream *fout, int WaypointId, int SessionId, int SolutionId, int Vehicleid, int PointOrder,
 		int RoutePointId, int RouteId, XYPoint_STR v, long long FeatureId);
 	void    CSV_writeWaypointsHeader(ofstream *fout);

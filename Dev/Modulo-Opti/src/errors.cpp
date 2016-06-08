@@ -88,7 +88,14 @@ void CError::warning(const char* format, ...)
 {
 #ifdef DEBUG
 	char *text;
-	flog << "WARNING: ";
+	fprintf(ferr,"WARNING: ");
+	va_list args;
+	va_start(args, format);
+	fprintf(ferr,"%s", format);
+	text = va_arg(args, char*);
+	fprintf(ferr," %s\n", text);
+	va_end(args);
+/*	flog << "WARNING: ";
 	va_list args;
 	va_start(args, format);
 	flog << format;
@@ -96,5 +103,6 @@ void CError::warning(const char* format, ...)
 	flog << " " << text;
 	va_end(args);
 	flog << endl;
+ */        
 #endif
 }

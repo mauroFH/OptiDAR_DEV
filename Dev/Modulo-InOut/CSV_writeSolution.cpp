@@ -30,25 +30,22 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
 
     shpHandle = SHPOpen(Ist->networkFileName, "rb");
     if (shpHandle == NULL){
-            snprintf(buf, sizeof(buf), "Error opening  SHP file %s\n", Ist->networkFileName);
+            snprintf(buf, sizeof(buf), "Error opening  SHP file %s", Ist->networkFileName);
             error.fatal(buf, __FUNCTION__);
-            return -1;
     }
     // get general file info
     SHPGetInfo(shpHandle, &numElements, &shpType, padfMinBound, padfMaxBound);
     if (shpType != 3){
             snprintf(buf, sizeof(buf), " - wrong shpfile type %d, mut be 3", shpType);
             error.fatal(buf, __FUNCTION__);
-            return -1;
     }
     // Open file
     snprintf(buf, sizeof(buf), "%s//%s_Waypoint.csv", OUTPUTDIR, Instance);
     fout.open(buf, ios::out);
     if (!fout.is_open())
     {
-            snprintf(buf, sizeof(buf), "File cannot be opened %s", buf);
+            snprintf(buf, sizeof(buf), "File cannot be opened : %s", buf);
             error.fatal(buf, __FUNCTION__);
-            return(-1);
     }
     // write headings
     // We remove it because CSV2DB does not manage the header
@@ -56,12 +53,7 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
     //
     // first stop
     i_stop = 0;
-    /*CSV_writeWaypointsFirstArc(shpHandle, &fout, &WaypointId, SolutionId, VehicleId, &PointOrder, RoutePointId, RouteId, &v_lastWritten, mySHP, Ist);
-    // next  stops 
-    i_stop++;
-    if (i_stop >= Ist->TRoute.nstop)   // all stops written 
-            goto terminate;
-    *///    
+
     if (Ist->TRoute.v_stop_out[i_stop].StopOrPark == 0) // Stop Point
             v_stop = Ist->v_Points[Ist->v_StopPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
     else // parking point
@@ -82,9 +74,8 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
             shpObject = SHPReadObject(shpHandle, (int)is->index);
             if (shpObject == NULL)
             {
-                    snprintf(buf, sizeof(buf), "Allocation failed...");
+                    snprintf(buf, sizeof(buf), "Failed to read a shpObject of arc %lld",a->info.id);
                     error.fatal(buf, __FUNCTION__);
-                    return(-1);
             }
             // scan a polyline
             for (int ip = 0; ip < shpObject->nParts; ip++){
@@ -211,102 +202,6 @@ void C_CSV::CSV_writeWaypointsRow(ofstream *fout, int WaypointId, int SessionId,
 	(*fout).flush();
 
 }
-
-int C_CSV::CSV_writeWaypointsFirstArc(SHPHandle shpHandle, ofstream *fout, int *WaypointId, int SolutionId,
-	int VehicleId, int *PointOrder, int RoutePointId, int RouteId, XYPoint_STR *lastP, C_SHP *mySHP, C_IST *Ist){
-	SHPObject  *shpObject = NULL;
-	XYPoint_STR p, v, w;
-	int i, i_stop, k_arc;
-	Arc_STR *a;
-	IShape_STR *is;
-        double dummy1, dummy2;
-	bool stopReached = false;
-	//CError error;
-
-	//
-	//    (*WaypointId) =(*PointOrder) = 0;
-	//
-	if (Ist->TRoute.v_stop_out[0].indexArc != 0){
-		error.fatal("First stop not on the first arc", __FUNCTION__);
-		exit(-1);
-	}
-	i_stop = 0;
-	if (Ist->TRoute.v_stop_out[i_stop].indexSoP == 0) // Stop Point
-		p = Ist->v_Points[Ist->v_StopPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
-	else // parking point
-		p = Ist->v_Points[Ist->v_ParkingPoints[Ist->TRoute.v_stop_out[i_stop].indexSoP].i_Point].P;
-	// write the stop
-	k_arc = Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[0]].original_Arc;
-	if ( k_arc >= 0) {
-		// the stop is on arc 0 and it is a true arc
-		a = &(Ist->v_SHP_Arcs_List[k_arc]);
-		CSV_writeWaypointsRow(fout, *WaypointId, Ist->SessionID, SolutionId, VehicleId, *PointOrder, RoutePointId, RouteId, p, a->info.id);
-		(*WaypointId)++; (*lastP) = p; //(*PointOrder)++; 
-	}
-	else{
-		CSV_writeWaypointsRow(fout, *WaypointId, Ist->SessionID, SolutionId, VehicleId, *PointOrder, RoutePointId, RouteId, p, 0);
-		(*WaypointId)++; (*PointOrder)++; (*lastP) = p;
-		return 0;
-	}
-	//
-	for (is = a->info.i_shp_first; is != NULL; is = is->next) {    // an arc may contain several polylines
-
-		// Free memory if necessary
-		if (shpObject != NULL)
-		{
-			free(shpObject);
-			shpObject = NULL;
-		}
-
-		shpObject = SHPReadObject(shpHandle, (int)is->index);
-		if (shpObject == NULL)
-		{
-			snprintf(buf, sizeof(buf), "Allocation failed...");
-			error.fatal(buf, __FUNCTION__);
-			return(-1);
-		}
-
-		// scan a polyline
-		for (i = 0; i < shpObject->nVertices - 1; i++) {                 // a polyline may contain several segments                 
-			// check part i
-			v.X = shpObject->padfX[i];   v.Y = shpObject->padfY[i];   // starting point of the segment
-			w.X = shpObject->padfX[i + 1]; w.Y = shpObject->padfY[i + 1]; // ending point of the segment
-			//
-			if (!stopReached) {
-				//if (!mySHP->SHP_isPointOnSegment(p, v, w)) continue;
-				if (!mySHP->SHP_isPointOnSegment(p, v, w, &dummy1, &dummy2)) continue;
-				//
-				// point on this segment
-				//
-				CSV_writeWaypointsRow(fout, *WaypointId, Ist->SessionID, SolutionId, VehicleId, *PointOrder, -1, RouteId, w, a->info.id);
-				(*WaypointId)++; (*lastP) = w; //(*PointOrder)++; 
-				stopReached = true;
-				continue;
-			}
-			// stop already written 
-			if (!mySHP->SHP_PointsCoincide(*lastP, v)) {
-				// write v
-				CSV_writeWaypointsRow(fout, *WaypointId, Ist->SessionID, SolutionId, VehicleId, *PointOrder, -1, RouteId, v, a->info.id);
-				(*WaypointId)++; (*lastP) = v; // (*PointOrder)++;  
-			}
-			if (!mySHP->SHP_PointsCoincide(*lastP, w)) {
-				// write v
-				CSV_writeWaypointsRow(fout, *WaypointId, Ist->SessionID, SolutionId, VehicleId, *PointOrder, -1, RouteId, w, a->info.id);
-				(*WaypointId)++; (*lastP) = w; // (*PointOrder)++;
-			}
-		}// for i
-	}// for is
-
-	// Free memory
-	if (shpObject != NULL)
-	{
-		free(shpObject);
-		shpObject = NULL;
-	}
-
-	return 0;
-}
-
 /*
  int CSV::CSVwriteWaypointsLasttArc( SHPHandle shpHandle, ofstream fout, Point_STR *lastP, C_IST *Ist){
 }
@@ -315,7 +210,6 @@ void C_CSV::CVS_writePath(C_SHP *mySHP, C_IST *Ist, char *Instance) {
 	int i, i_stop, id;
 	long narcs, *arc;
 	int *id_spezzone;
-	//CError error;
 
 	narcs = Ist->TRoute.RArcs.npoints - 1;
 	arc = new long[narcs];
@@ -344,7 +238,6 @@ void C_CSV::CVS_writePath(C_SHP *mySHP, C_IST *Ist, char *Instance) {
 */
 void C_CSV::CVS_writeRoute(C_IST *Ist, char *Instance){
 	ofstream fout;
-	//CError error;
 	int RouteId = Ist->RouteID;
 	int SolutionId = Ist->SolutionID;
 	int VehicleId = Ist->v_Vehicles[Ist->TRoute.VehicleID].VehicleId;
@@ -387,7 +280,6 @@ void C_CSV::CVS_writeRoute(C_IST *Ist, char *Instance){
 void C_CSV::CVS_writeRoutePoint(C_IST *Ist, char *Instance){
 	int i;
 	ofstream fout;
-	//CError error;
 	int RouteId = Ist->RouteID;
 	int RoutePointId = RouteId * CON_MAXSTOPSROUTE + 1;
 	int SolutionId = Ist->SolutionID;
@@ -457,17 +349,6 @@ void C_CSV::CVS_writeRoutePoint(C_IST *Ist, char *Instance){
 			fout << setprecision(15) << Ist->v_Points[Ist->v_ParkingPoints[Ist->TRoute.v_stop_out[i].indexSoP].i_Point].P.X << SEP
 				<< setprecision(15) << Ist->v_Points[Ist->v_ParkingPoints[Ist->TRoute.v_stop_out[i].indexSoP].i_Point].P.Y << SEP;
 		}
-		//// RequestAddress ID
-		//switch (Ist->TRoute.v_stop_out[i].type) {
-		//case 1: // pickup
-		//	fout << Ist->v_Requests[Ist->TRoute.v_stop_out[i].indexReq].pickup.RequestAddressId << SEP;
-		//	break;
-		//case 2: // dropoff
-		//	fout << Ist->v_Requests[Ist->TRoute.v_stop_out[i].indexReq].pickup.RequestAddressId << SEP;
-		//	break;
-		//default:
-		//	fout << -1 << SEP;
-		//}
 		// Point ID
 		if (Ist->TRoute.v_stop_out[i].StopOrPark == 0) {// Stop
 			fout << Ist->v_Points[Ist->v_StopPoints[Ist->TRoute.v_stop_out[i].indexSoP].i_Point].PointId << SEP;
@@ -477,7 +358,6 @@ void C_CSV::CVS_writeRoutePoint(C_IST *Ist, char *Instance){
 			fout << Ist->v_Points[Ist->v_ParkingPoints[Ist->TRoute.v_stop_out[i].indexSoP].i_Point].PointId << SEP;
 		}
 		// RelativeDistance        
-		//fout << setprecision(2) << fixed << (float)(Ist->TRoute.v_stop_out[i].distance - LastDistance) << SEP << "\n";          
 		fout << setprecision(2) << fixed << (float)(Ist->TRoute.v_stop_out[i].distance - LastDistance) << "\n";
 		//
 		LastDistance = Ist->TRoute.v_stop_out[i].distance;
@@ -499,7 +379,6 @@ void C_CSV::CVS_writeRoutePoint(C_IST *Ist, char *Instance){
 void C_CSV::CVS_writeRouteOld(C_IST *Ist, char *Instance){
 	int i;
 	ofstream fout;
-	//CError error;
 	int RouteId = Ist->RouteID;
 	int SolutionId = Ist->SolutionID;
 	int VehicleId = Ist->TRoute.VehicleID;
@@ -610,7 +489,6 @@ void C_CSV::CVS_writeRouteOld(C_IST *Ist, char *Instance){
 void C_CSV::CVS_writeRequestInRoute(C_IST *Ist, char *Instance){
 	int i;
 	ofstream fout;
-	//CError error;
 	int RouteId = Ist->RouteID;
 	int RoutePointId = RouteId * CON_MAXSTOPSROUTE + 1;
 	int RequestInRouteId = RoutePointId;
@@ -674,7 +552,6 @@ void C_CSV::CVS_writeRequestInRoute(C_IST *Ist, char *Instance){
 * @return 
 */
 void C_CSV::CVS_writeSolution(C_IST *Ist, char *Instance){
-	//int i;
 	ofstream fout;
 
 	// Open file
@@ -710,7 +587,6 @@ void C_CSV::CVS_writeSolution(C_IST *Ist, char *Instance){
 */
 int C_CSV::CVS_writeSetup(C_IST *Ist)
 {
-	//int i;
 	ofstream fout;
 
 	// Open file
@@ -720,7 +596,6 @@ int C_CSV::CVS_writeSetup(C_IST *Ist)
 	{
 		snprintf(buf, sizeof(buf), "File cannot be opened %s", buf);
 		error.fatal(buf, __FUNCTION__);
-		return -1;
 	}
 	static char SEP = CON_CSVFILE_SEPARATOR;
 
