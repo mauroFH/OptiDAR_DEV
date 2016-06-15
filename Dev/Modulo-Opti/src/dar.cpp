@@ -422,14 +422,14 @@ void CDar::checkrequests(void)
 		if (!eval_insertion(*ptr_route, eval_insert))
 		{
 			snprintf(buf, sizeof(buf), "Request %d: infeasible", i);
-			error.warning(buf, __FUNCTION__);
+			error.warning_opt(buf, __FUNCTION__);
 			// Check ride time
 			i_pickup		= i; i_delivery = i + nof.requests;
 			travel_time = (int)t(i_pickup, i_delivery, 0, 0);
 			i_request	= getrequest(i);
 			if (v_requests[i_request].ride_limit < travel_time){
 				snprintf(buf, sizeof(buf), "   -->Request infeasible for ride time: %d < %d", v_requests[i_request].ride_limit, travel_time);
-				error.warning(buf, __FUNCTION__);
+				error.warning_opt(buf, __FUNCTION__);
 			}
 		}
 	}

@@ -11,6 +11,23 @@
 */
 CSolution::CSolution()
 {
+	// Initialzie the solution
+	init();
+};
+
+/**
+* Destructor
+*/
+CSolution::~CSolution()
+{
+
+};
+
+/**
+* Initialize the solution
+*/
+void CSolution::init()
+{
 	int i;
 	this->cost = 0;
 	this->nof_routes = 0;
@@ -23,13 +40,6 @@ CSolution::CSolution()
 	}
 };
 
-/**
-* Destructor
-*/
-CSolution::~CSolution()
-{
-
-};
 
 /**
 * Allocate a new empty route for the solution of type (i_node_start,i_node_end).
@@ -308,21 +318,33 @@ void CRoute::remove_node(int p_node)
 
 /**
 * Set the solution depending on the request in input
+* @param dar DAR instance
 * @param i_request request index
 */
-void CSolution::set_request(int i_request)
+void CSolution::set_request(class CDar &dar, int i_request)
 {
 	bool routed;
+	int	i_paired_request;
 
 	if (i_request < 0) return;
 	routed = this->routed[i_request];
 	if (routed){
 		this->routed[i_request] = false;
 		this->nof_requests_routed--;
+		i_paired_request = dar.v_requests[i_request-1].i_paired_request;
+		if (i_paired_request > 0){
+			this->routed[i_paired_request] = false;
+			//this->nof_requests_routed--;
+		}
 	}
 	else
 	{
 		this->routed[i_request] = true;
 		this->nof_requests_routed++;
+		i_paired_request = dar.v_requests[i_request-1].i_paired_request;
+		if (i_paired_request > 0){
+			this->routed[i_paired_request] = true;
+			//this->nof_requests_routed++;
+		}
 	}
 }

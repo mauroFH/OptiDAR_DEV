@@ -54,15 +54,24 @@ bool CDar::feasibility_tw(CRoute &route, constraint_type &constraint)
 	route.time		= 0;
 	route.distance	= 0;
 	route.cost		= 0;
-	// Origin (note: must be changed if more than one vehicle is available)
-	p_node				= route.p_head;
-	ptr_node				= &(route.v_nodes[p_node]);
-	i_node				= ptr_node->i_node;// index of the node
-	ptr_node->s_time		= 0;
-	ptr_node->a_time		= v_nodes[i_node].tw.e_time;
-	ptr_node->d_time		= v_nodes[i_node].tw.e_time;
-	ptr_node->l_time		= v_nodes[i_node].tw.l_time;
-	ptr_node->w_time		= 0;
+	// Last node (ending depot)
+	p_node						= route.p_tail;
+	ptr_node						= &(route.v_nodes[p_node]);
+	i_node						= ptr_node->i_node;// index of the node
+	v_nodes[i_node].tw.e_time	= v_vehicles[i_vehicle].v_slots_tw[0].e_time;
+	v_nodes[i_node].tw.l_time	= v_vehicles[i_vehicle].v_slots_tw[0].l_time;
+	// Origin (starting depot)
+	p_node						= route.p_head;
+	ptr_node						= &(route.v_nodes[p_node]);
+	i_node						= ptr_node->i_node;// index of the node
+	v_nodes[i_node].tw.e_time	= v_vehicles[i_vehicle].v_slots_tw[0].e_time;
+	v_nodes[i_node].tw.l_time	= v_vehicles[i_vehicle].v_slots_tw[0].l_time;
+	ptr_node->s_time				= 0;
+	ptr_node->a_time				= v_nodes[i_node].tw.e_time;
+	ptr_node->d_time				= v_nodes[i_node].tw.e_time;
+	ptr_node->l_time				= v_nodes[i_node].tw.l_time;
+	ptr_node->w_time				= 0;
+
 	// Next node
 	p_node			= route.v_nodes[route.p_head].p_next;
 	while (p_node != NIL)
@@ -542,15 +551,15 @@ bool CDar::feasibility_wt(CRoute &route, constraint_type &constraint)
 		// Check RIDE TIME
 		if (v_nodes[i_node].type == DELIVERY)
 		{
-                    // Node corredponsind to the delivery
-                    p_pickup = ptr_node->p_request;
-                    ptr_pickup = &(route.v_nodes[p_pickup]);
-                    //i_node_pickup = ptr_pickup->i_node;
-                    delta = (ptr_node->d_time - ptr_pickup->d_time) - v_nodes[i_node].ride_time;
-                    if (delta > 0){
-                        constraint = RIDETIME;
-                        return false;
-                    }
+					// Node corredponsind to the delivery
+					p_pickup = ptr_node->p_request;
+					ptr_pickup = &(route.v_nodes[p_pickup]);
+					//i_node_pickup = ptr_pickup->i_node;
+					delta = (ptr_node->d_time - ptr_pickup->d_time) - v_nodes[i_node].ride_time;
+					if (delta > 0){
+						constraint = RIDETIME;
+						return false;
+					}
 		}
 		// Next node
 		p_node = ptr_node->p_next;

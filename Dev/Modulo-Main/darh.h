@@ -55,15 +55,6 @@ using namespace std;
 
 #include "../Modulo-Opti/include/constants.h"
 
-/* Bring in DAR header files */
-#include "../Modulo-Opti/include/random.h"
-#include "../Modulo-Opti/include/utils.h"
-#include "../Modulo-Opti/include/errors.h"
-#include "../Modulo-Opti/include/solution.h"
-#include "../Modulo-Opti/include/DAR.h"
-#include "../Modulo-Opti/include/hsv.h"
-#include "../Modulo-Opti/include/sort.h"
-
 /* Shapelib header files*/
 #include "../Modulo-ShapeLib/shapefil.h"
 
@@ -73,6 +64,15 @@ using namespace std;
 /* In Out header files*/
 #include "../Modulo-InOut/C_SHP.h"
 #include "../Modulo-InOut/C_CSV.h"
+
+/* Bring in DAR header files */
+#include "../Modulo-Opti/include/random.h"
+#include "../Modulo-Opti/include/utils.h"
+#include "../Modulo-Opti/include/errors.h"
+#include "../Modulo-Opti/include/solution.h"
+#include "../Modulo-Opti/include/DAR.h"
+#include "../Modulo-Opti/include/hsv.h"
+#include "../Modulo-Opti/include/sort.h"
 
 /* ModuloIO header files*/
 #include "../Modulo-InOut/ModuloIO.h"

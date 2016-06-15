@@ -73,7 +73,7 @@ void CDar::out_solution(char *Instance)
 @param route route
 #param flog output stream
 */
-void CDar::out_route(CRoute &route, ofstream &flog)
+void CDar::out_route_01(CRoute &route, ofstream &flog)
 {
 	char sep = CON_CSVFILE_SEPARATOR;
 	int p_node, i_node, p_pred;
@@ -141,6 +141,110 @@ void CDar::out_route(CRoute &route, ofstream &flog)
 			load_seated		= (int)ptr_node->q[0];
 			load_standing	= (int)ptr_node->q[1];
 			load_disabled	= 0;
+			//
+			flog << load_seated << sep << load_standing << sep << load_disabled << sep;
+			//
+		}
+		//
+		flog << ptr_node->a_time << sep << ptr_node->d_time << sep;
+		//
+		//
+		if (print_aux_data){
+			int ei = v_nodes[i_node].tw.e_time;
+			int li = v_nodes[i_node].tw.l_time;
+			char str[8];
+			DATsec2string(ptr_node->a_time, str);  flog << str << sep;
+			DATsec2string(ptr_node->d_time, str);  flog << str << sep;
+			DATsec2string(ei, str);  flog << str << sep;
+			DATsec2string(li, str);  flog << str << sep;
+		}
+		//
+		flog << endl;
+		//...
+
+		// Next node
+		p_pred = p_node;
+		p_node = ptr_node->p_next;
+	}
+	flog.flush();
+}
+
+/*
+@brief Output of a route.
+@param route route
+#param flog output stream
+*/
+void CDar::out_route(CRoute &route, ofstream &flog)
+{
+	char sep = CON_CSVFILE_SEPARATOR;
+	int p_node, i_node, p_pred;
+	CNode *ptr_node, *ptr_pred;
+	float cdist;
+	int ctime, i, j, time, i_vehicle, load_disabled, load_seated, load_standing;
+	bool print_aux_data = true;
+
+	p_node = route.p_head;
+	cdist = 0;
+	ctime = 0;
+	p_pred = NIL;
+	i_vehicle = route.i_vehicle;
+	assert(i_vehicle >= 0);
+	//...
+	// Vehicle index
+	flog << "vehicle index" << sep << i_vehicle << sep << endl;
+	//
+	// Type of capacity constrint
+	if (v_vehicles[i_vehicle].type_ccons == S)
+		flog << "#node" << sep << "code" << sep << "type" << sep << "distance" << sep << "time" << sep << "load" << sep
+		<< "a.time" << sep << "d.time" << sep;
+	if ((v_vehicles[i_vehicle].type_ccons == A) || (v_vehicles[i_vehicle].type_ccons == B))
+		flog << "#node" << sep << "code" << sep << "type" << sep << "distance" << sep << "time" << sep << "seated" << sep << "standing" << sep << "disabled" << sep
+		<< "a.time" << sep << "d.time" << sep;
+	if (print_aux_data)
+	{
+		flog << "a.time" << sep << "d.time" << sep << "e.time" << sep << "l.time" << sep;
+	}
+	flog << endl;
+	//...
+	while (p_node != NIL)
+	{
+		// Current node
+		ptr_node = &(route.v_nodes[p_node]);
+		i_node = ptr_node->i_node;// index of the node
+
+		if (p_pred != NIL)
+		{
+			ptr_pred = &(route.v_nodes[p_pred]);
+			i = ptr_pred->i_node;
+			j = ptr_node->i_node;
+			time = ptr_pred->d_time;
+			cdist = cdist + d(i, j, time, i_vehicle);
+			ctime = ctime + (int)t(i, j, time, i_vehicle);
+		}
+
+		//...
+		i = ptr_node->i_node;
+		// Nodes are numbered from 0
+		flog << i_node - 1 << sep << v_nodes[i_node].code << sep << node_type_str[v_nodes[i].type] << sep << cdist << sep << ctime << sep;
+		// Type of capacity constrint
+		if (v_vehicles[i_vehicle].type_ccons == S)
+			flog << ptr_node->q[0] << sep;
+		if (v_vehicles[i_vehicle].type_ccons == A){
+			load_seated = (int)ptr_node->q[0];
+			load_standing = 0;
+			if (load_seated > v_vehicles[i_vehicle].seated_capacity){
+				load_standing = load_seated - v_vehicles[i_vehicle].seated_capacity;
+				load_seated = v_vehicles[i_vehicle].seated_capacity;
+			}
+			load_disabled = (int)ptr_node->q[1];
+			//
+			flog << load_seated << sep << load_standing << sep << load_disabled << sep;
+			//
+		}
+		if (v_vehicles[i_vehicle].type_ccons == B){
+			load_seated = (int)ptr_node->q[0];
+			load_standing = (int)ptr_node->q[1];
+			load_disabled = 0;
 			//
 			flog << load_seated << sep << load_standing << sep << load_disabled << sep;
 			//
@@ -277,6 +381,8 @@ void CDar::ex_input(void)
 				v_requests[j].tw.l_time		= li;
 				v_requests[j].type			= ABLE;
 				v_requests[j].demand	[0]		= (float) demand;
+				v_requests[j].fixed = false;
+				v_requests[j].i_paired_request = NIL;
 				for (k = 0; k < nof.vehicles; k++)
 					v_requests[j].v_objection_vehicles[k] = 0;
 				for (k = 0; k <= nof.requests; k++)
@@ -331,7 +437,7 @@ END:;
 * Read in DARP data.
 @param Instance instance name
 */
-void CDar::input(char *Instance)
+void CDar::input_01(char *Instance)
 {
 	//CError error;
 	ifstream	 fin;
@@ -467,6 +573,8 @@ void CDar::input(char *Instance)
 			v_requests[j].v_s_times_delivery[0] = st;
 			v_requests[j].tw.e_time		= ei;
 			v_requests[j].tw.l_time		= li;
+			v_requests[j].fixed = false;
+			v_requests[j].i_paired_request = NIL;
 			if (demand_able > 0 && demand_disabled == 0)
 			{
 				v_requests[j].type		= ABLE;
@@ -533,6 +641,220 @@ END:;
 	fin.close();
 }
 
+/**
+* Read in DARP data.
+@param Instance instance name
+*/
+void CDar::input(char *Instance)
+{
+	//CError error;
+	ifstream	 fin;
+	int i, i_dummy, ei, li, j, nc, k, type;
+	float x, y;
+	int demand_able, demand_disabled;
+	char code[CON_MAXNSTRCODE];
+	float st, rt;
+	float distance, time;
+	int n_entries;
+	int tot_capacity;
+	char sep;
+	char buf[100];
+	double scalef = 10000;
+	int n_origin, n_destination;
+	int fixed, i_paired_request;
+
+	// Open the log file
+	snprintf(buf, sizeof(buf), "%s//%s_dar_input.csv", INPUTDIR, Instance);
+	fin.open(buf, ios::out);
+	if (!fin.is_open()){
+		snprintf(buf, sizeof(buf), "File opening %s", buf);
+		error.fatal(buf, __FUNCTION__);
+		goto END;
+	}
+
+	// SECTION 1
+	// #requests, #depots, #vehicles
+	fin >> nof.requests >> sep >> nof.depots >> sep >> nof.vehicles >> sep;
+
+	// Check dimensions
+	nof.nodes = 2 * nof.requests + nof.depots;
+	nof.vehicle_types = 1;
+	if (!checkdata())
+		error.fatal("Maxinum code dimensions reached", __FUNCTION__);
+
+	// Indices
+	ind.first_depot = 2 * nof.requests + 1;
+	ind.last_request = 2 * nof.requests;
+	ind.first_delivery = nof.requests + 1;
+
+	// SECTION 2
+	for (k = 0; k < nof.vehicles; k++){
+		// code, 	# seated capacity, # standing capacity, 	# seated capacity(disabled), # total passengers of the vehicle,	earliest time,	latest time, 	origin, 	destination
+		fin >> v_vehicles[k].code >> sep >> v_vehicles[k].seated_capacity >> sep >> v_vehicles[k].standing_capacity >> sep >>
+			v_vehicles[k].seated_disabled >> sep >> v_vehicles[k].total_passengers >> sep >>
+			v_vehicles[k].v_slots_tw[k].e_time >> sep >> v_vehicles[k].v_slots_tw[k].l_time >> sep >> n_origin >> sep >>
+			n_destination >> sep;
+		v_vehicles[k].nof_slots_tw = 1;
+		v_vehicles[k].node_origin = n_origin + 1;
+		v_vehicles[k].node_destination = n_destination + 1;
+
+
+		// Define type of capacity constraints
+		// case a)
+		//			Vehicle [seated_capacity+standing_capacity, seated_disabled]
+		//			Customers: ABLE [x,0], DISABLED [k,x], ABLE+DISABLED [x,x] (request is DISABLED)
+
+		// cases b) and c)
+		//			Vehicle [seated_capacity, standing_capacity]
+		//			Customers: ABLE [x,0], DISABLED [k,x], ABLE+DISABLED [x,x] (request is DISABLED)
+
+		//				
+		tot_capacity = v_vehicles[k].seated_capacity + v_vehicles[k].standing_capacity + v_vehicles[k].seated_disabled;
+		if (tot_capacity == v_vehicles[k].total_passengers)
+		{
+			nof.dimensions = 2;
+			v_vehicles[k].type_ccons = A;
+			v_vehicles[k].v_capacities[k] = float(v_vehicles[k].seated_capacity + v_vehicles[k].standing_capacity);
+			v_vehicles[k].v_capacities[1] = float(v_vehicles[k].seated_disabled);
+		}
+		else
+		{
+			nof.dimensions = 2;
+			v_vehicles[k].type_ccons = B;
+			v_vehicles[k].v_capacities[k] = (float)v_vehicles[k].seated_capacity;
+			v_vehicles[k].v_capacities[1] = (float)v_vehicles[k].standing_capacity;
+		}
+		for (j = 1; j <= nof.nodes; j++)
+			v_vehicles[k].v_objection_nodes[j] = 0;
+		v_vehicles[k].type = 0;
+	}
+
+	// Vehicle type
+	strcpy(v_vehicle_types[0].code, "");
+
+	// SECTION 3
+	// node number,	code, coordinate x,	coordinate y, earliest time, latest time,	service time, ride time, demand_able, demand_disabled, fixed, paired_request
+	for (i = 1; i <= 2 * nof.requests; i++)
+	{
+		fin >> i_dummy >> sep >> code >> sep >> x >> sep >> y >> sep >> ei >> sep >> li >> sep >> st >> sep >> rt >> sep >> demand_able >> 
+			sep >> demand_disabled >> sep >> fixed >> sep >> i_paired_request >> sep;
+		//
+		i_paired_request++; // request start from 1, input from 0
+		// Define nodes
+		strcpy(v_nodes[i].code, code);
+		v_nodes[i].latitude = y / scalef;
+		v_nodes[i].longitude = x / scalef;
+		v_nodes[i].max_w_time = 0;
+		v_nodes[i].s_time[0] = (int)st;
+		v_nodes[i].tw.e_time = ei;
+		v_nodes[i].tw.l_time = li;
+		v_nodes[i].ride_time = (int)rt;
+		v_nodes[i].priority = 0;
+		if (i <= nof.requests){
+			v_nodes[i].type = PICKUP;
+			if (demand_able > 0 && demand_disabled == 0)
+			{
+				v_nodes[i].demand[0] = (float)demand_able;	// ABLE: index 0
+				v_nodes[i].demand[1] = 0;
+			}
+			if (demand_able == 0 && demand_disabled > 0)
+			{
+				v_nodes[i].demand[1] = (float)demand_disabled;	// DISABLE: index 1
+				v_nodes[i].demand[0] = 0;
+			}
+			if (demand_able > 0 && demand_disabled > 0)
+			{
+				v_nodes[i].demand[0] = (float)demand_able;	// ABLE: index 0
+				v_nodes[i].demand[1] = (float)demand_disabled;		// DISABLED: index 1
+			}
+		}
+		else{
+			v_nodes[i].type = DELIVERY;
+			v_nodes[i].demand[0] = -v_nodes[i - nof.requests].demand[0];
+			v_nodes[i].demand[1] = -v_nodes[i - nof.requests].demand[1];
+			v_nodes[i].priority = 0;
+		}
+		// v_nodes[i].demand; to be defined during the feasibility
+		// Define the request
+		if (i <= nof.requests){
+			j = i - 1;
+			strcpy(v_requests[j].code, code);
+			v_requests[j].priority = 0;
+			v_requests[j].ride_limit = (int)rt;
+			v_requests[j].v_s_times_pickup[0] = st;
+			v_requests[j].v_s_times_delivery[0] = st;
+			v_requests[j].tw.e_time = ei;
+			v_requests[j].tw.l_time = li;
+			if (fixed==0)
+				v_requests[j].fixed = false;
+			else
+				v_requests[j].fixed = true;
+			v_requests[j].i_paired_request = i_paired_request;
+			if (demand_able > 0 && demand_disabled == 0)
+			{
+				v_requests[j].type = ABLE;
+				v_requests[j].demand[0] = (float)demand_able;
+				v_requests[j].demand[1] = 0;
+			}
+			if (demand_able == 0 && demand_disabled > 0)
+			{
+				v_requests[j].type = DISABLED;
+				v_requests[j].demand[1] = (float)demand_disabled;
+				v_requests[j].demand[0] = 0;
+			}
+			if (demand_able > 0 && demand_disabled > 0)
+			{
+				v_requests[j].type = DISABLED;
+				v_requests[j].demand[0] = (float)demand_able;
+				v_requests[j].demand[1] = (float)demand_disabled;
+			}
+			for (k = 0; k < nof.vehicles; k++)
+				v_requests[j].v_objection_vehicles[k] = 0;
+			for (k = 0; k <= nof.requests; k++)
+				v_requests[j].v_objection_requests[k] = 0;
+		}
+	}
+	// SECTION 4
+	// node number,	code, type
+	nc = 0;
+	for (i = 2 * nof.requests + 1; i <= nof.nodes; i++)
+	{
+		fin >> i_dummy >> sep >> code >> sep >> x >> sep >> y >> sep >> type >> sep;
+		if (type == 0) v_depots[nc].type = VEHICLE_DEPOT;
+		if (type == 1) v_depots[nc].type = PARKING_AREA;
+		v_depots[nc].parking_capacity = 0;
+		v_depots[nc].tw.e_time = 0;
+		v_depots[nc].tw.l_time = 0;
+		strcpy(v_depots[nc].code, code);
+		// Define nodes
+		strcpy(v_nodes[i].code, code);
+		v_nodes[i].latitude		= y / scalef;
+		v_nodes[i].longitude		= x / scalef;
+		v_nodes[i].max_w_time	= 0;
+		v_nodes[i].s_time[0]		= 0;
+		v_nodes[i].tw.e_time		= 0;
+		v_nodes[i].tw.l_time		= 0;
+		v_nodes[i].ride_time		= 0;
+		v_nodes[i].type			= v_depots[nc].type;
+		v_nodes[i].priority		= 0;
+	}
+	// SECTION 5
+	n_entries = (2 * nof.requests + nof.depots)*(2 * nof.requests + nof.depots) - (2 * nof.requests + nof.depots);
+	for (k = 1; k <= n_entries; k++){
+		fin >> i >> sep >> j >> sep >> distance >> sep >> time >> sep;
+		m_dist[i + 1][j + 1][0] = distance;
+		m_time[i + 1][j + 1][0] = time;
+	}
+
+	// Additional data
+	cons_max_wtime_stops = 15 * 60;
+
+	// Instance loaded
+	flg_instance_loaded = true;
+	//
+END:;
+	fin.close();
+}
 
 /**
 * Print in outout the latex layout of the instance loaded.

@@ -15,9 +15,12 @@
 * Main function (integrated project)
 */
 #ifdef CONSOLE
-	void main(void)				
+	// Error Logging management
+	CError error;
+
+	void main(void)
 	{									
-		char Instance[30] = "ISTANZA01";	// to be excluded for the integrated project
+		char Instance[30] = "ISTANZA33";	// to be excluded for the integrated project
 #else
 	int main_DAR(char *Instance) // to be activated for the integrated project
 	{

@@ -1,8 +1,8 @@
 /** \file errors.cpp
- * --------------------------------------------------------------------------
- * Licensed Materials - Property of
- * --------------------------------------------------------------------------
- */
+* --------------------------------------------------------------------------
+* Licensed Materials - Property of
+* --------------------------------------------------------------------------
+*/
 
 #include "../../Modulo-Main/DARH.h"
 
@@ -23,17 +23,20 @@ CError::~CError()
 };
 
 /**
-* Fatal error: Prints the message and function name to stderr and terminates the program.
-  @param format message string
+* Fatal error: Prints the message and function name to stderr, ferr, and csv and terminate the program.
+@param format message string
 */
 void CError::fatal(const char* format, ...)
 {
 	char *text;
 	char DateTime[50];
-//	char Message[255];
+	//	char Message[255];
 	struct tm *dtime1;
 	time_t dtime2;
 	static char SEP = CON_CSVFILE_SEPARATOR;
+
+	// Setup Status
+	Status = 2;
 
 	if (ferr == NULL)
 		fprintf(stderr, "FATAL ERROR: ");
@@ -55,7 +58,7 @@ void CError::fatal(const char* format, ...)
 		fprintf(ferr, "--> function ");
 	}
 
-	text=va_arg(args, char*);
+	text = va_arg(args, char*);
 
 	if (ferr == NULL)
 		vfprintf(stderr, text, args);
@@ -72,30 +75,100 @@ void CError::fatal(const char* format, ...)
 	// Write le CSV-Log file
 	time(&dtime2);
 	dtime1 = localtime(&dtime2);
-	sprintf(DateTime, "%4.4d-%2.2d-%2.2d %2.2d:%2.2d:%2.2d", 1900+dtime1->tm_year, dtime1->tm_mon+1, dtime1->tm_mday, dtime1->tm_hour, dtime1->tm_min, dtime1->tm_sec);
-	fprintf(error.fcsv, "%d %c %d %c %s %c %s %c %s %c ",
+	sprintf(DateTime, "%4.4d-%2.2d-%2.2d %2.2d:%2.2d:%2.2d", 1900 + dtime1->tm_year, dtime1->tm_mon + 1, dtime1->tm_mday, dtime1->tm_hour, dtime1->tm_min, dtime1->tm_sec);
+	fprintf(error.fcsv, "%d %c %d %c %s %c %s %c %s %c \n",
 		error.LogID, SEP, error.SessionID, SEP, DateTime, SEP, text, SEP, format, SEP);
 	fflush(error.fcsv);
 
+	// Prima di uscire è necessario scrivere la Tabella "Solution.CSV"
+	myCSV->CVS_writeSolution();
+
+	fclose(error.fcsv);
+	
 	exit(-1);
 }
 
+
 /**
-* Fatal error: Prints the message and function name to stderr and terminates the program.
+* Warning: Prints the message and function name to stderr, ferr, and csv and go on with the program.
 @param format message string
 */
 void CError::warning(const char* format, ...)
 {
-#ifdef DEBUG
 	char *text;
-	fprintf(ferr,"WARNING: ");
+	char DateTime[50];
+	//	char Message[255];
+	struct tm *dtime1;
+	time_t dtime2;
+	static char SEP = CON_CSVFILE_SEPARATOR;
+
+	// Setup Status
+	Status = 1;
+
+	if (ferr == NULL)
+		fprintf(stderr, "WARNING: ");
+	else
+		fprintf(ferr, "WARNING: ");
+
 	va_list args;
 	va_start(args, format);
-	fprintf(ferr,"%s", format);
+	//sprintf(Message, "%s", format);
+
+	if (ferr == NULL)
+	{
+		vfprintf(stderr, format, args);
+		fprintf(stderr, "--> function ");
+	}
+	else
+	{
+		vfprintf(ferr, format, args);
+		fprintf(ferr, "--> function ");
+	}
+
 	text = va_arg(args, char*);
-	fprintf(ferr," %s\n", text);
+
+	if (ferr == NULL)
+		vfprintf(stderr, text, args);
+	else
+		vfprintf(ferr, text, args);
+
 	va_end(args);
-/*	flog << "WARNING: ";
+
+	if (ferr == NULL)
+		fprintf(stderr, "\n");
+	else
+		fprintf(ferr, "\n");
+
+	// Write le CSV-Log file
+	time(&dtime2);
+	dtime1 = localtime(&dtime2);
+	sprintf(DateTime, "%4.4d-%2.2d-%2.2d %2.2d:%2.2d:%2.2d", 1900 + dtime1->tm_year, dtime1->tm_mon + 1, dtime1->tm_mday, dtime1->tm_hour, dtime1->tm_min, dtime1->tm_sec);
+	fprintf(error.fcsv, "%d %c %d %c %s %c %s %c %s %c \n",
+		error.LogID, SEP, error.SessionID, SEP, DateTime, SEP, text, SEP, format, SEP);
+	fflush(error.fcsv);
+
+}
+
+
+/**
+* Warning: Prints the message and function name to stderr and go on with the program.
+@param format message string
+*/
+void CError::warning_old(const char* format, ...)
+{
+#ifdef DEBUG
+	char *text;
+	
+	fprintf(ferr, "WARNING: ");
+	va_list args;
+	va_start(args, format);
+	fprintf(ferr, "%s", format);
+	text = va_arg(args, char*);
+	fprintf(ferr, " %s\n", text);
+	va_end(args);
+
+	/*
+	flog << "WARNING: ";
 	va_list args;
 	va_start(args, format);
 	flog << format;
@@ -103,6 +176,26 @@ void CError::warning(const char* format, ...)
 	flog << " " << text;
 	va_end(args);
 	flog << endl;
- */        
+	*/
+
+#endif
+}
+
+/**
+* Fatal error: Prints the message and function name to stderr and terminates the program.
+@param format message string
+*/
+void CError::warning_opt(const char* format, ...)
+{
+	char *text;
+#ifdef DEBUG
+	flog << "WARNING: ";
+	va_list args;
+	va_start(args, format);
+	flog << format;
+	text = va_arg(args, char*);
+	flog << " " << text;
+	va_end(args);
+	flog << endl;
 #endif
 }

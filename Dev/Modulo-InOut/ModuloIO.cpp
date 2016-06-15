@@ -36,7 +36,8 @@ int ReadInputData(C_SHP *mySHP, C_IST *Ist, C_CSV *myCSV)
     
     // Save the CSV file for the optimizer
     snprintf(buf2, sizeof(buf2), "%s//%s_dar_input.csv", INPUTDIR, buf1);
-    myCSV->CSV_writeOptiData(buf2, mySHP, Ist);
+	//myCSV->CSV_writeOptiData(buf2, mySHP, Ist);
+	myCSV->CSV_writeOptiData_MS2(buf2, mySHP, Ist);
 
     // creates a shape with the requests
     mySHP->SHP_writeShapeRequests(buf1, Ist );
@@ -58,20 +59,21 @@ int ReadInputData(C_SHP *mySHP, C_IST *Ist, C_CSV *myCSV)
 \----------------------------------------------------------------------------*/
 int ReadOutputData(C_SHP *mySHP, C_IST *Ist, C_CSV *myCSV)
 {
-    char buf1[100];
+    char buf1[CON_MAXNSTR];
 
     // Read the CSV file containing the soltion computed by the optimizer
     snprintf(buf1, sizeof(buf1), "ISTANZA%d", Ist->SessionID);
     snprintf(buf, sizeof(buf), "%s//%s_dar_solution.csv", OUTPUTDIR, buf1);
-    myCSV->CSV_readOptiData(buf, mySHP, Ist);
+	//myCSV->CSV_readOptiData(buf, mySHP, Ist);
+	myCSV->CSV_readOptiData_MS2(buf, mySHP, Ist);
 
     // Write the output files
-    myCSV->CVS_writeWaypoints( mySHP, Ist, buf1);
+    myCSV->CVS_writeWaypoints(mySHP, Ist, buf1);
 	//myCSV->CVS_writeRouteOld(Ist, buf1);
 	myCSV->CVS_writeRoute(Ist, buf1);
 	myCSV->CVS_writeRoutePoint(Ist, buf1);
 	myCSV->CVS_writeRequestInRoute(Ist, buf1);
-	myCSV->CVS_writeSolution(Ist, buf1);
+	myCSV->CVS_writeSolution();
 	myCSV->CVS_writeSetup(Ist);
 
 	// write shapefiles 

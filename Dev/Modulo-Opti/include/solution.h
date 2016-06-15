@@ -86,8 +86,9 @@ class CSolution{
 		int  totpriority; /// total priority
 
 		// Function
+		void init(); // itinialize a solution
 		int new_route(int i_node_start, int i_node_end); // add an empty route of type (start,end) to the solution
-		void set_request(int i_request); // set the solution to add or remove the request in input
+		void set_request(class CDar &dar, int i_request); // set the solution to add or remove the request in input
 };
 
 

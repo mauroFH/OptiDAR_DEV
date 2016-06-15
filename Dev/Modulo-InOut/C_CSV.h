@@ -63,9 +63,12 @@ public:
 
 	int     CSV_CheckInputDataSize(C_IST *Ist);
 	int     CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist);
+	int     CSV_writeOptiData_MS2(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist);
 	int     CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist);
+	int     CSV_readOptiData_MS2(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist);
 	int     CSV_OptiIODebug(C_IST *Ist);
 	int     CSV_AssignVehicle(C_IST *Ist, long *ivehicle, long *ivehiclesched);
+	int     CSV_AssignVehicle_MS2(C_IST *Ist, long *nveh, long *ivehicle, long *ivehiclesched);
 
 	int     CVS_writeSetup(C_IST *Ist);
 	int     CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance);
@@ -79,7 +82,7 @@ public:
 	void    CVS_writeRoutePoint(C_IST *Ist, char *Instance);
 	void    CVS_writeRouteOld(C_IST *Ist, char *Instance);
 	void    CVS_writeRequestInRoute(C_IST *Ist, char *Instance);
-	void    CVS_writeSolution(C_IST *Ist, char *Instance);
+	void    CVS_writeSolution(void);
 };
 
 #endif /* C_CSV_H */

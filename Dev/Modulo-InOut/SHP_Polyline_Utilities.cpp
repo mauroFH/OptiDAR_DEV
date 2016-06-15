@@ -28,7 +28,7 @@ int C_SHP::SHP_readAndBuildLines(char *filename, C_IST *Ist){
 
 	SHP_myopen(filename, &shpHandle, &dbfHandle, &shpType, &shpNumElements, &shpNumArcs, Ist);
 	if (shpType != 3) {
-		error.fatal(" - this procedure read only type 3 shapefiles (polyline)", __FUNCTION__);
+		error.fatal(" This procedure read only type 3 shapefiles (polyline)", __FUNCTION__);
 	}
 	SHP_allocateFullLines(shpNumArcs, Ist);
 	SHP_readPolyline(shpHandle, dbfHandle, Ist);

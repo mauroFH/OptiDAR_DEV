@@ -551,11 +551,16 @@ void C_CSV::CVS_writeRequestInRoute(C_IST *Ist, char *Instance){
 * @param Instance  input name of the instance
 * @return 
 */
-void C_CSV::CVS_writeSolution(C_IST *Ist, char *Instance){
+void C_CSV::CVS_writeSolution(void){
+
 	ofstream fout;
+	char buf1[CON_MAXNSTR];
+
+	// Read the CSV file containing the soltion computed by the optimizer
+	snprintf(buf1, sizeof(buf1), "ISTANZA%d", error.SessionID);
 
 	// Open file
-	snprintf(buf, sizeof(buf), "%s//%s_Solution.csv", OUTPUTDIR, Instance);
+	snprintf(buf, sizeof(buf), "%s//%s_Solution.csv", OUTPUTDIR, buf1);
 	fout.open(buf, ios::out);
 	if (!fout.is_open())
 	{
@@ -569,9 +574,18 @@ void C_CSV::CVS_writeSolution(C_IST *Ist, char *Instance){
 	//(fout).flush();
 
 	// Route ID
-	fout << Ist->SolutionID << SEP;
-	fout << Ist->SessionID << SEP;
-	fout << Ist->SolutionNum;
+	fout << error.SolutionID << SEP;
+	fout << error.SessionID << SEP;
+	fout << error.SolutionNum << SEP;
+	if (error.Status == 0)
+		fout << " OK ";
+	else if (error.Status == 1)
+		fout << " WARNING ";
+	else if (error.Status == 2)
+		fout << " FAILED ";
+	else
+		fout << " UNKNOWN ";
+
 	fout.flush();
 
 	// Close file

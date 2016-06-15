@@ -6,7 +6,7 @@ using namespace std;
 //#include "../Modulo-InOut/DB_CSV.h"
 
 #define shpEPS 4.0
-#define shpCLOSE 6.0 /// used to determine if an object is "close" to another (yes if distance <= shpCLOSE)
+#define shpCLOSE 15.0 /// used to determine if an object is "close" to another (yes if distance <= shpCLOSE)
 #define SWAP(A, B, T) {T C;C=(A);(A)=(B);(B)=C;}
 #define R_EARTH 6378000.0
 #define PI 3.14159265

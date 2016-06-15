@@ -148,6 +148,8 @@ struct requests_str{
 	short v_objection_requests[MAXN_REQUESTS]; /// \c v_objections_requests[j]=1 if the request cannot be in the same vehicle of the request \c j , 0 otherwise */
 	short v_objection_vehicles[MAXN_VEHICLES]; /// \c v_objection_vehicles[k]=1 if the request cannot be served by vehicle \c k , 0 otherwise */
 	float demand[MAXN_DIMENSIONS];				/// demand associated with the request */
+	bool		fixed;	/// = true iff the request is fixed in the solution, false otherwise */
+	short	i_paired_request; /// index of the request paired with thr request, =-1 if not defined */
 };
 
 /// Data used to evaluate the insertion of a request into a route
@@ -198,10 +200,12 @@ class CDar{
 		float c(int i, int j, int k, int t); // cost function c(i,j,k,t)
 		// ...................... I/O
 		void input(char *Instance);
+		void input_01(char *Instance);
 		void print_data(char *Instance); // print DAR data
 		void out_data(char *Instance); // output of the instance data
 		void out_solution(char *Instance); // output of solution
 		void out_route(CRoute &route, ofstream &flog); // output of a route
+		void out_route_01(CRoute &route, ofstream &flog); // output of a route
 
 		// ...................... Feasibility
 		bool feasibility(CRoute &route, constraint_type &constraint); // route feasibility

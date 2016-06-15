@@ -68,7 +68,10 @@ int main(int argc, char **argv)
 	error.ferr = Ist.flog;
 	error.fcsv = Ist.fcsv;
 	error.SessionID = Ist.SessionID;
+	error.SolutionID = Ist.SolutionID;
+	error.SolutionNum = Ist.SolutionNum;
 	error.LogID = Ist.LogID;
+	error.myCSV = &myCSV;
 
 	// Start!
 	if (Ist.debug) printf("OptiDAR: Start \n\n");

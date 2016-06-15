@@ -53,6 +53,7 @@ enum ActionType{
 #define CON_MAXNDESCRTOV            250 /// Type Of Vehicle DESCRIPTION size
 #define CON_MAXNCODVEHICLE           50 /// Vehicle CODE size
 #define CON_MAXNDESCRVEHICLE        250 /// Vehicle DESCRIPTION size
+#define CON_MAXNTYPE                 50 /// Action Type string size
 #define CON_MAXNSTR                 250 /// Generic string size
 #define CON_MAXCODEVALUE          10000 /// Generic maximum numeric code value
 
@@ -147,7 +148,9 @@ struct Request_STR{
     int MaxTransit;         /// Maximum transit time (on the vehicle)
     int ServiceTime;        /// time needed to enter or exit the vehicle
     int ConfirmedTime;      /// if > 0 the request must be served at this time
-    int LoadNormal;         /// Number of customers without disabilities 
+	char ConfirmedActionType[CON_MAXNTYPE]; /// Action Type: ENUM {‘Pickup’, ‘Dropoff’}
+	int ConfirmedActionTypeID;              /// Action Type: ID {0=‘Pickup’, 1=‘Dropoff’}
+	int LoadNormal;         /// Number of customers without disabilities 
     int LoadDisabled;       /// Number of customers with disabilities
     int LoadWheelChair;     /// Number of customers with wheel chair
     int i_Vheicle;          /// Index of v_Vehicles[]
@@ -236,6 +239,12 @@ struct parameters{
 	long PathType;    /// 0=shortest; 100=fastest; ]0,100[: a convex combination
 };
 
+struct veh_available {
+	long nveh;           // Number of vehice available for the optimizer
+	long *ivehicle;      // Vehicle index in table "Vehicle"
+	long *ivehiclesched; // Vehicle index in table "VehicleSceduled"
+};
+
 class C_IST{
 private:
 
@@ -280,28 +289,36 @@ public:
 
 	int SHP_num_Vertices;           /// number of elements currently stored in v_SHP_Vertices_List
 	int SHP_num_Arcs;               /// number of elements currently stored in v_SHP_Arcs_List
+
 	/// FORWARD STAR OF THE EXPANDED GRAPH
 	int *v_fromFS;                  /// v_fromFS[i] points to the first arc emanating from vertex 
 	struct arc_FS_STR *v_ArcsFS;    /// List of arcs : arcs emanating from the same vertex are contiguous 
 	int num_VerticesFS, num_ArcsFS; /// self explaining
+
 	/// Points
 	struct Point_STR *v_Points;     /// an array containing all the physical points
 	int num_Points;
+
 	/// Stops
 	struct StopPoint_STR *v_StopPoints; /// an array containing all the stops
 	int num_StopPoints;
+
 	/// ParkingPoints
 	struct ParkingPoint_STR *v_ParkingPoints; /// an array containing all the parking points
 	int num_ParkingPoints;
+
 	/// Requests
 	struct Request_STR *v_Requests; /// array containing the requests 
 	int num_Requests;
+
 	/// Vehicles
 	struct Vehicle_STR *v_Vehicles; /// array containing ...
 	int num_Vehicles;
+
 	/// Vehicles schdules
 	struct VehicleSchedule_STR *v_VehicleSchedules;  /// array containing ...
 	int num_VehicleSchedules;
+
 	/// Types of Vehicles
 	struct TypeOfVehicle_STR *v_TypeOfVehicles;  /// array containing ...
 	int num_TypeOfVehicles;
@@ -311,10 +328,11 @@ public:
 	/// expanded, generating several vertices among which vertex i 
 
 	struct DPoint *v_DT_back;   /// *v_DT_back returns back from a row of matrixDT to the original structures
-	/// v_DT_back[i] gives the informations on the stop and/or request associated with row i of matrixDT 
+	                            /// v_DT_back[i] gives the informations on the stop and/or request associated with row i of matrixDT 
 	struct route_arcs Rarcs;    /// arcs of a route TRoute
 	struct tab_route TRoute;    /// one route
-	struct matrice_dt MatrixDT; /// che ne so ?
+	struct matrice_dt MatrixDT; /// Matrix Distance/Time
+	struct veh_available VehOpti; /// Vehicle available for the optimization algorithm
 };
     
 #endif /* DB_H */

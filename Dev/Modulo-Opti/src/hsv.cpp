@@ -30,13 +30,27 @@ CHsv::~CHsv()
 */
 void CHsv::solve(class CDar &dar)
 {
+	int k;
+	CSolution s_best;
+
 	// Preprocessing
 	preproc(dar);
-	// Apply main heuristic
-	main(dar);
+
+	for (k = 0; k < dar.nof.vehicles; k++){
+		// Inizialize the solution
+		dar.solution.init();
+		// Apply main heuristic
+		main(dar,k);
+		// Compare the solution found with the best current solution
+		if (compare_solution_vehicle(dar.solution, s_best)){
+			s_best = dar.solution;
+		}
+	}
+	// Best solution found
+	dar.solution = s_best;
 	// If solutoin found, local optimize it
 	if (dar.solution.nof_routes > 0){
-		main(dar);
+		main(dar, dar.solution.v_routes[0].i_vehicle);
 		// Insert stops in the best solution found
 		dar.insert_stops(dar.solution.v_routes[0]);
 	}
@@ -45,8 +59,9 @@ void CHsv::solve(class CDar &dar)
 /**
 * Main function
   @param dar dar class data
+  @param i_vehicle vehicle index
 */
-void CHsv::main(class CDar &dar)
+void CHsv::main(class CDar &dar, int i_vehicle)
 {
 	CSolution s_current, s_best, s_old;
 	double z_current, z_best, z_old;
@@ -66,22 +81,23 @@ void CHsv::main(class CDar &dar)
 		initial_solution = true;
 
 	// Parameter settings
-	hsv_algp.noise = 0;
+	hsv_algp.noise		  = 0;
 	hsv_algp.objf_penalty = 100000;
 	if (initial_solution)
 	{
+		// Solution given in input
 		drop_t		= 0.6;
 		cool_t		= 0.8;
-		max_iter	= 100;
+		max_iter		= 100;
 		max_nworse	= 10;
 	}
 	else
 	{
+		// Empty solution in input
 		drop_t			= 0.6;
 		cool_t			= 0.99975;
-		max_iter		= 100;
+		max_iter			= 500;
 		max_nworse		= 20;
-		hsv_algp.noise	= 0;
 	}
 	// For each unrouted pair
 	for (i = 1; i < dar.nof.requests; i++){
@@ -102,13 +118,16 @@ void CHsv::main(class CDar &dar)
 	else
 	{
 		// Vehicle assiged is the first vehicle
-		s_current.v_routes[0].i_vehicle = 0;
+		s_current.v_routes[0].i_vehicle = i_vehicle;
 		// Create a new empty route, route of index 0 is used to store the solution
 		i_node_start = dar.v_vehicles[0].node_origin;
-		i_node_end = dar.v_vehicles[0].node_destination;
+		i_node_end	 = dar.v_vehicles[0].node_destination;
 		s_current.new_route(i_node_start, i_node_end);
 		// Find an initial feasible solution (if any)
-		if (!greedy_insertion(dar, s_current, false)) goto END;
+		// Insert "fixed" requests
+		greedy_insertion(dar, s_current, true, false);
+		// Complete the solution
+		if (!greedy_insertion(dar, s_current, false, false)) goto END;
 		z_current = compute_fitness(dar, s_current);
 	}
 	
@@ -128,7 +147,7 @@ void CHsv::main(class CDar &dar)
 		greedy_remove(dar, s_current, n_drop, false);
 		z_current = compute_fitness(dar, s_current);
 		// Apply regret heuristic
-		greedy_insertion(dar, s_current, false);
+		greedy_insertion(dar, s_current, false, false);
 		// Apply local optimization
 		lopt_swaps(dar, s_current);
 		// Check the current solution
@@ -159,7 +178,7 @@ void CHsv::main(class CDar &dar)
 			// Remove from the current solution n_drop request
 			greedy_remove(dar, s_current, n_drop, true);
 			// Apply regret heuristic
-			greedy_insertion(dar, s_current, true);
+			greedy_insertion(dar, s_current, false, true);
 			n_worse = 0;
 		}
 		// Update heuristic parameters
@@ -220,10 +239,11 @@ void CHsv::preproc(class CDar &dar)
 * Compute a feasible single-vehicle DAR solution using a greedy insertion heuristic
 @param dar dar class data
 @param sol solution
+@param fixed = true if only fixed request must be considered, false otherwise
 @param noise =true if noise activated, false otherwise
 @return true if feasible solution computed, false otherwise
 */
-bool CHsv::greedy_insertion(class CDar &dar, class CSolution &sol, bool noise)
+bool CHsv::greedy_insertion(class CDar &dar, class CSolution &sol, bool fixed, bool noise)
 {
 	bool computed, inserted;
 	int i,ii;
@@ -247,6 +267,8 @@ bool CHsv::greedy_insertion(class CDar &dar, class CSolution &sol, bool noise)
 		for (ii = 1; ii <= dar.nof.requests; ii++){
 			i = v_sort_requests[ii];
 			assert(i >= 1 && i <= dar.nof.requests);
+			if (fixed && !(dar.v_requests[i-1].fixed))
+				continue;
 			// Check if i is routed
 			if (!sol.routed[i]){
 				// Request i
@@ -285,8 +307,10 @@ bool CHsv::greedy_insertion(class CDar &dar, class CSolution &sol, bool noise)
 			assert(feasible);
 			// Update the solution
 			sol.cost = ptr_route->cost;
-			sol.set_request(i_pickup);
+			sol.set_request(dar,i_pickup);
 			sol.totpriority += dar.v_nodes[i_pickup].priority;
+			if (fixed) // the request is fixed in the solution and cannot be removed
+				sol.fixed[i_pickup] = true;
 		}
 		// Repeat until an insertion has been done
 	} while (inserted);
@@ -360,7 +384,7 @@ void CHsv::greedy_remove(class CDar &dar, class CSolution &sol, int n_drop, bool
 			assert(feasible);
 			// Update the solution
 			sol.cost = ptr_route->cost;
-			sol.set_request(eval_best.i_request);
+			sol.set_request(dar, eval_best.i_request);
 			sol.totpriority -= dar.v_nodes[eval.i_request].priority;
 		}
 
@@ -398,6 +422,26 @@ bool CHsv::compare_solution(class CSolution &sol1, double z1, class CSolution &s
 			if (sol1.totpriority < sol2.totpriority)
 				best = true;
 		}
+	return (best);
+}
+
+/**
+* Compare the two solutions in input (vehicle version)
+@param sol1 first solution
+@param sol2 second solution
+@return true sol1 is better than sol2, false otherwise
+*/
+bool CHsv::compare_solution_vehicle(class CSolution &sol1, class CSolution &sol2)
+{
+	bool best = false;
+	if (sol1.nof_requests_routed > sol2.nof_requests_routed)
+		best = true;
+	else 
+		if (sol1.nof_requests_routed == sol2.nof_requests_routed){
+			if (sol1.cost < sol2.cost)
+				best = true;
+		}
+		
 	return (best);
 }
 
