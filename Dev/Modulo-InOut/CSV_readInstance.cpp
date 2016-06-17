@@ -1094,16 +1094,18 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 	fin = fopen(FileName, "r");
 	if (fin == NULL)
 	{
-            snprintf(buf,sizeof(buf),"File %s cannot be opened",FileName);
-            error.fatal(buf, __FUNCTION__);
+		snprintf(buf, sizeof(buf), "File %s cannot be opened", FileName);
+		error.fatal(buf, __FUNCTION__);
+		return -1;
 	}
 
 	// Counts the records
 	numRec = CSV_contaRec(fin);
 	if (numRec < 1)
 	{
-            snprintf(buf,sizeof(buf),"Setup file %s is empty",FileName);
-            error.fatal(buf, __FUNCTION__);
+		snprintf(buf, sizeof(buf), "Setup file %s is empty", FileName);
+		error.fatal(buf, __FUNCTION__);
+		return -1;
 	}
 
 	// riposiziona il file in testa
@@ -1127,7 +1129,9 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
 			snprintf(buf, sizeof(buf), "File = %s - Record = %ld field %d not found", FileName, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
-		};
+			return -1;
+		}
+
 		memcpy(buf, word, CON_MAXNSTR);
 		if (strncmp(buf, "RouteId", 7) == 0)
 		{
@@ -1142,23 +1146,28 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 			ipar = -1;
 			snprintf(buf, sizeof(buf), "File = %s - Parameter not recognized", FileName);
 			error.fatal(buf, __FUNCTION__);
+			return -1;
 		}
 
 		//////// Value
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
 			snprintf(buf, sizeof(buf), "File = %s - Record = %ld field %d not found", FileName, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
-		};
-		if (CSVnonIntero(word))	{
+			return -1;
+		}
+
+		if (CSVnonIntero(word)) {
 			snprintf(buf, sizeof(buf), "File = %s - Record = %ld field %d not an integer = %s", FileName, numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
-			return(-1);
+			return -1;
 		}
+
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
 		sscanf(word_dummy, "%ld", &i);
-		if (i < 0)	{
+		if (i < 0) {
 			snprintf(buf, sizeof(buf), "File = %s - Record = %ld field %d negative = %ld", FileName, numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
+			return -1;
 		}
 		if (ipar == 0)
 		{
@@ -1172,6 +1181,7 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 		{
 			snprintf(buf, sizeof(buf), "File = %s - Parameter not recognized", FileName);
 			error.fatal(buf, __FUNCTION__);
+			return -1;
 		}
 
 		konta++;
@@ -1206,16 +1216,18 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 	fin = fopen(FileName, "r");
 	if (fin == NULL)
 	{
-            snprintf(buf,sizeof(buf),"File %s cannot be opened",FileName);            
-            error.fatal(buf, __FUNCTION__);
+		snprintf(buf, sizeof(buf), "File %s cannot be opened", FileName);
+		error.fatal(buf, __FUNCTION__);
+		return -1;
 	}
 
 	// Counts the records
 	numRec = CSV_contaRec(fin);
 	if (numRec < 1)
 	{
-            snprintf(buf,sizeof(buf),"Parameter file %s empty",FileName);            
+		snprintf(buf, sizeof(buf), "Parameter file %s empty", FileName);
 		error.fatal(buf, __FUNCTION__);
+		return -1;
 	}
 
 	// riposiziona il file in testa
@@ -1239,7 +1251,9 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
 			snprintf(buf, sizeof(buf), "File = %s - Record = %ld field %d not found", FileName, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
-		};
+			return -1;
+		}
+
 		memcpy(buf, word, CON_MAXNSTR);
 		if (strncmp(buf, "PathType", 8) == 0)
 		{
@@ -1254,22 +1268,28 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 			ipar = -1;
 			snprintf(buf, sizeof(buf), "File = %s - Parameter not recognized", FileName);
 			error.fatal(buf, __FUNCTION__);
+			return -1;
 		}
 
 		//////// Value
 		if ((i = CSV_getWord(numRec, &numFields, &p, word)) < 0) {
 			snprintf(buf, sizeof(buf), "File = %s - Record = %ld field %d not found", FileName, numRec, numFields);
 			error.fatal(buf, __FUNCTION__);
-		};
-		if (CSVnonIntero(word))	{
+			return -1;
+		}
+
+		if (CSVnonIntero(word)) {
 			snprintf(buf, sizeof(buf), "File = %s - Record = %ld field %d not an integer = %s", FileName, numRec, numFields, word);
 			error.fatal(buf, __FUNCTION__);
+			return -1;
 		}
+
 		memcpy(word_dummy, word, sizeof(word));// sscanf requires char, not unsigned char
 		sscanf(word_dummy, "%ld", &i);
-		if (i < 0)	{
+		if (i < 0) {
 			snprintf(buf, sizeof(buf), "File = %s - Record = %ld field %d negative = %ld", FileName, numRec, numFields, i);
 			error.fatal(buf, __FUNCTION__);
+			return -1;
 		}
 		if (ipar == 0)
 		{
@@ -1283,6 +1303,7 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 		{
 			snprintf(buf, sizeof(buf), "File = %s - Parameter not recognized", FileName);
 			error.fatal(buf, __FUNCTION__);
+			return -1;
 		}
 
 		konta++;

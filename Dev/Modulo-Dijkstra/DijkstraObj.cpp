@@ -1823,8 +1823,8 @@ round2:
 		
 	if (pred!=NULL)
 	{
-		for (i=nver;i==1;i--)
-			ipred[i]=ipred[i-1]+1;
+		for (i = nver; i >= 1; i--)
+			ipred[i] = ipred[i - 1] + 1;
 
 		*pred=ipred;
 	}

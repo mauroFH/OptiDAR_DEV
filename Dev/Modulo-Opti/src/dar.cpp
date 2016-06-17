@@ -399,16 +399,16 @@ void CDar::checkrequests(void)
 	CSolution	s_current;
 	//CError		error;
 	int			i_node_start, i_node_end, i;
-	eval_str		eval_insert;
+	eval_str	eval_insert;
 	CRoute		*ptr_route;
-	char			buf[200];
+	char		buf[200];
 	int			i_pickup, i_delivery, travel_time, i_request;
 
 	// Vehicle assiged is the first vehicle of index 0
 	s_current.v_routes[0].i_vehicle = 0;
 	// Create a new empty route, route of index 0 is used to store the solution
-	i_node_start		= v_vehicles[0].node_origin;
-	i_node_end		= v_vehicles[0].node_destination;
+	i_node_start = v_vehicles[0].node_origin;
+	i_node_end = v_vehicles[0].node_destination;
 	// Create a new route
 	s_current.new_route(i_node_start, i_node_end);
 	// Ptr to the nuew route
@@ -424,10 +424,10 @@ void CDar::checkrequests(void)
 			snprintf(buf, sizeof(buf), "Request %d: infeasible", i);
 			error.warning_opt(buf, __FUNCTION__);
 			// Check ride time
-			i_pickup		= i; i_delivery = i + nof.requests;
+			i_pickup = i; i_delivery = i + nof.requests;
 			travel_time = (int)t(i_pickup, i_delivery, 0, 0);
-			i_request	= getrequest(i);
-			if (v_requests[i_request].ride_limit < travel_time){
+			i_request = getrequest(i);
+			if (v_requests[i_request].ride_limit < travel_time) {
 				snprintf(buf, sizeof(buf), "   -->Request infeasible for ride time: %d < %d", v_requests[i_request].ride_limit, travel_time);
 				error.warning_opt(buf, __FUNCTION__);
 			}
