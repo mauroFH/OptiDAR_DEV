@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 	main_DAR(buf1);
 	t2 = clock();
 	dt = (double)(t2 - t1) / CLOCKS_PER_SEC;
-	if (Ist.debug) printf("  Computing Time (sec) Optimization: %6.3f\n\n", dt);
+	if (Ist.debug) printf("\n\n  Computing Time (sec) Optimization: %6.3f\n\n", dt);
 	fprintf(Ist.flog, "  Computing Time (sec) Optimization: %6.3f\n\n", dt);
 
 	//

@@ -184,40 +184,95 @@ int C_CSV::CSV_readInstance(char *Instance, char  *shapeFileName, C_SHP *mySHP, 
 	//
 	// N.B. The order of the read is constrained by precedence: do not chanage !
 	//
+
 	// Setup
+	fprintf(Ist->flog, "    Perform CSV_readSetup... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//Setup.csv", INPUTDIR);
 	CSV_readSetup(buf, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
+
 	// Parameters
+	fprintf(Ist->flog, "    Perform CSV_readParameters... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//Parameters.csv", INPUTDIR);
 	CSV_readParameters(buf, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
+
 	// Point
+	fprintf(Ist->flog, "    Perform CSV_readPoint... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//%s_Point.csv", INPUTDIR, Instance);
 	snprintf(shape, sizeof(shape), "%s//%s", INPUTDIR, shapeFileName);
 	CSV_readPoint(buf, shape, mySHP, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
+
 	// StopPoint
+	fprintf(Ist->flog, "    Perform CSV_readStopPoint... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//%s_StopPoint.csv", INPUTDIR, Instance);
 	CSV_readStopPoint(buf, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
+
 	// ParkingPoint
+	fprintf(Ist->flog, "    Perform CSV_readParkingPoint... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//%s_ParkingPoint.csv", INPUTDIR, Instance);
 	CSV_readParkingPoint(buf, mySHP, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
+
 	// Type Of Vehicle
+	fprintf(Ist->flog, "    Perform CSV_readTypeOfVehicle... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//%s_TypeOfVehicle.csv", INPUTDIR, Instance);
 	CSV_readTypeOfVehicle(buf, mySHP, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
+
 	// Vehicle
+	fprintf(Ist->flog, "    Perform CSV_readVehicle... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//%s_Vehicle.csv", INPUTDIR, Instance);
 	CSV_readVehicle(buf, mySHP, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
+
 	// Vehicle Schedule
+	fprintf(Ist->flog, "    Perform CSV_readVehicleSchedule... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//%s_VehicleSchedule.csv", INPUTDIR, Instance);
 	CSV_readVehicleSchedule(buf, mySHP, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
+
 	// ParkingPointCapacity
+	fprintf(Ist->flog, "    Perform CSV_readParkingPointCapacity... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//%s_ParkingPointCapacity.csv", INPUTDIR, Instance);
 	CSV_readParkingPointCapacity(buf, mySHP, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
+
 	// Request
+	fprintf(Ist->flog, "    Perform CSV_readRequest... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//%s_Request.csv", INPUTDIR, Instance);
 	CSV_readRequest(buf, mySHP, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
+
 	// RequestAddress
+	fprintf(Ist->flog, "    Perform CSV_readRequestAddress... \n");
+	fflush(Ist->flog);
 	snprintf(buf, sizeof(buf), "%s//%s_RequestAddress.csv", INPUTDIR, Instance);
 	CSV_readRequestAddress(buf, mySHP, Ist);
+	fprintf(Ist->flog, "    Done! \n");
+	fflush(Ist->flog);
 
 	return 0;
 }

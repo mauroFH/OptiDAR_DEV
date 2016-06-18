@@ -780,7 +780,7 @@ int C_CSV::CSV_OptiIODebug(C_IST *Ist)
 	time = 0;
 	dist1 = 0;
 	time1 = 0;
-	printf("\n\n WAYPOINTS\n\n");
+	fprintf(Ist->flog,"\n  WAYPOINTS\n");
 	for (i = 0; i < Ist->TRoute.nstop; i++)
 	{
 		if (i > 0)
@@ -801,7 +801,7 @@ int C_CSV::CSV_OptiIODebug(C_IST *Ist)
 		assert(k2 >= 0);
 		i1 = Ist->v_ArcsFS[k2].from;
 		i2 = Ist->v_ArcsFS[k2].to;
-		printf("Arco stop %ld: indice=%ld  arco=%ld - (%ld,%ld) \n", i, k1, k2, i1, i2);
+		fprintf(Ist->flog, "  Arc stop %ld: indice=%ld  arc=%ld - (%ld,%ld) \n", i, k1, k2, i1, i2);
 
 		if (i == 0)
 		{
@@ -818,18 +818,18 @@ int C_CSV::CSV_OptiIODebug(C_IST *Ist)
 		{
 			for (j = k1; j < Ist->TRoute.v_stop_out[i + 1].indexArc; j++)
 			{
-				printf(" [%ld] arco=%ld - (%d,%d) ", j, Ist->TRoute.RArcs.arc[j], Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].from, Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].to);
+				fprintf(Ist->flog, " [%ld] arc=%ld - (%d,%d) ", j, Ist->TRoute.RArcs.arc[j], Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].from, Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].to);
 				dist += Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].length;
 				time += (long)(60.0*Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].minutes);
 			}
 		}
-		printf("\n");
+		fprintf(Ist->flog, "\n");
 
 		if (i == Ist->TRoute.nstop - 1)
 		{
 			for (j = k1; j < Ist->TRoute.RArcs.npoints - 1; j++)
 			{
-				printf(" [%ld] arco=%ld - (%d,%d) ", j, Ist->TRoute.RArcs.arc[j], Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].from, Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].to);
+				fprintf(Ist->flog, " [%ld] arc=%ld - (%d,%d) ", j, Ist->TRoute.RArcs.arc[j], Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].from, Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].to);
 				dist += Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].length;
 				time += (long)(60.0*Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].minutes);
 			}
@@ -840,10 +840,10 @@ int C_CSV::CSV_OptiIODebug(C_IST *Ist)
 			time += (long)(60.0 * Ist->v_DT_back[i2].offset * Ist->v_ArcsFS[k2].minutes);
 		}
 
-		printf(" Opti_distance = %ld - Opti_time = %ld \n", Ist->TRoute.v_stop_out[i].distance, Ist->TRoute.v_stop_out[i].time);
-		printf(" Check_distance = %ld - Check_time = %ld \n", dist, time);
-		printf(" Check_distance(MAT) = %ld - Check_time(MAT) = %ld \n", dist1, time1);
-		printf("\n\n");
+		fprintf(Ist->flog, "  Opti_distance = %ld - Opti_time = %ld \n", Ist->TRoute.v_stop_out[i].distance, Ist->TRoute.v_stop_out[i].time);
+		fprintf(Ist->flog, "  Check_distance = %ld - Check_time = %ld \n", dist, time);
+		fprintf(Ist->flog, "  Check_distance(MAT) = %ld - Check_time(MAT) = %ld \n", dist1, time1);
+		fprintf(Ist->flog, "\n");
 	}
 
 	// Verifica connessione route
@@ -851,7 +851,7 @@ int C_CSV::CSV_OptiIODebug(C_IST *Ist)
 	{
 		if (Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j + 1]].from != Ist->v_ArcsFS[Ist->TRoute.RArcs.arc[j]].to)
 		{
-			printf("\n ERRORE CONNESSIONE PATH!!!");
+			fprintf(Ist->flog, "\n  ERROR PATH NOT CONNECTED!!!");
 			//return 1;
 		}
 	}
