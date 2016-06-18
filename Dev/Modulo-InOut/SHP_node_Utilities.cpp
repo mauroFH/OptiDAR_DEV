@@ -400,14 +400,16 @@ int C_SHP::SHP_writeShapeFromWaypoints(char *Instance){
 	shpObject.padfZ = new double[1];
 	shpObject.padfM = new double[1];
 
-	// open  output shapefiles
+	// open output shapefiles
 	snprintf(filename, sizeof(filename), "%s//%s_Waypoint", OUTPUTDIR, Instance);
-	shpHandleW = SHPCreate(buf, SHPT_POINT);
+	//shpHandleW = SHPCreate(buf, SHPT_POINT);
+	shpHandleW = SHPCreate(filename, SHPT_POINT);
 	if (shpHandleW == NULL){
 		snprintf(buf, sizeof(buf), "Error to create a SHP file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
 	}
-	dbfHandleW = DBFCreate(buf);
+	//dbfHandleW = DBFCreate(buf);
+	dbfHandleW = DBFCreate(filename);
 	if (dbfHandleW == NULL){
 		snprintf(buf, sizeof(buf), "Error to create a DBF file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);

@@ -22,9 +22,9 @@ int C_CSV::CVS_writeWaypoints(C_SHP *mySHP, C_IST *Ist, char *Instance){
     int WaypointId = Ist->RouteID*CON_MAXWAYPOINTSROUTE + 1;
     int SolutionId = Ist->SolutionID;
     int VehicleId = Ist->TRoute.VehicleID;
-    int PointOrder = 0;
+    int PointOrder = 1;
     int RouteId = Ist->RouteID;
-    int RoutePointId = Ist->RouteID*CON_MAXSTOPSROUTE + 0;
+    int RoutePointId = Ist->RouteID*CON_MAXSTOPSROUTE + 1;
 
     v_lastWritten.X = v_lastWritten.Y = -1;
 
