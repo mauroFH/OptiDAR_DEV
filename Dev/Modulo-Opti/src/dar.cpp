@@ -401,7 +401,6 @@ void CDar::checkrequests(void)
 	int			i_node_start, i_node_end, i;
 	eval_str	eval_insert;
 	CRoute		*ptr_route;
-	char		buf[200];
 	int			i_pickup, i_delivery, travel_time, i_request;
 
 	// Vehicle assiged is the first vehicle of index 0

@@ -450,7 +450,6 @@ void CDar::input_01(char *Instance)
 	int n_entries;
 	int tot_capacity;
 	char sep;
-	char buf[100];
 	double scalef = 10000;
 	int n_origin, n_destination;
 		
@@ -658,7 +657,6 @@ void CDar::input(char *Instance)
 	int n_entries;
 	int tot_capacity;
 	char sep;
-	char buf[100];
 	double scalef = 10000;
 	int n_origin, n_destination;
 	int fixed, i_paired_request;

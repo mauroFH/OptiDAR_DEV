@@ -61,7 +61,6 @@ void C_CSV::CSV_DeAllocateMatrixDT_and_C(C_IST *Ist)
 FILE *C_CSV::CSV_ApriFile(char *name, char *modo)
 {
 	FILE *dummy;
-	char buf[100];
 	// commento interno (a due barre) che non viene riportato da doc++
 	if ((dummy = fopen(name, modo)) == NULL) {
 		snprintf(buf, sizeof(buf), " opening file  %s", name);
@@ -120,7 +119,6 @@ long C_CSV::CSV_contaRec(FILE *inp)
 int C_CSV::CSV_getWord(int numRec, int *numFields, unsigned char **p, unsigned char *w)
 {
 	int i;
-	char buf[100];
 	(*numFields)++;
 	/*
 

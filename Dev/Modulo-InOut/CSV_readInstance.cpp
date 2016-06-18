@@ -1083,7 +1083,6 @@ int C_CSV::CSV_readSetup(char *FileName, C_IST *Ist)
 	long numRec;
 	long konta;
 	int numFields;
-	char buf[CON_MAXNSTR];
 	unsigned char *p, word[CON_MAXNSTR];
 	char word_dummy[CON_MAXNSTR];
 	static unsigned char line[512];
@@ -1205,7 +1204,6 @@ int C_CSV::CSV_readParameters(char *FileName, C_IST *Ist)
 	long numRec;
 	long konta;
 	int numFields;
-	char buf[CON_MAXNSTR];
 	unsigned char *p, word[CON_MAXNSTR];
 	char word_dummy[CON_MAXNSTR];
 	static unsigned char line[512];

@@ -9,13 +9,11 @@
 */
 int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 {
-	char *NomeProc = (char *) "CSV_readOptiData";
 	FILE *fin;
 	//CError error;
 	long numRec;
 	long konta;
 	int numFields;
-	char buf[CON_MAXNSTR];
 	unsigned char *p, word[CON_MAXNDESCRSTOPPOINT];
 	char word_dummy[CON_MAXNDESCRSTOPPOINT];
 	static unsigned char line[512];
@@ -371,13 +369,11 @@ int C_CSV::CSV_readOptiData(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 */
 int C_CSV::CSV_readOptiData_MS2(char *OptiOutFileName, C_SHP *mySHP, C_IST *Ist)
 {
-	char *NomeProc = (char *) "CSV_readOptiData";
 	FILE *fin;
 	//CError error;
 	long numRec;
 	long konta;
 	int numFields;
-	char buf[CON_MAXNSTR];
 	unsigned char *p, word[CON_MAXNDESCRSTOPPOINT];
 	char word_dummy[CON_MAXNDESCRSTOPPOINT];
 	static unsigned char line[512];
@@ -922,7 +918,6 @@ int C_CSV::CSV_writeOptiData(char *OptiInFileName, C_SHP *mySHP, C_IST *Ist)
 	long ivehicle;
 	long ivehiclesched = 0;
 	long blength, btime;
-	char buf[CON_MAXNSTR];
 	static char SEP = CON_CSVFILE_SEPARATOR;
 
 	Dijkstra mappa;

@@ -100,7 +100,6 @@ int C_SHP::SHPpointOutsideBox(SHPObject *shpObject, int i_SHP_index, XYPoint_STR
  *          0   minimum distance from p to the polyline
  */
 double C_SHP::SHPdistancePointPolyline(SHPHandle  shpHandle, DBFHandle dbfHandle, IShape_STR *is, XYPoint_STR p, bool RightLeft, double *l_offset){
-	char buf[100];
 	SHPObject *shpObject;
 	XYPoint_STR v1, v2;
 	double distance, length, offset, segment_length; // working  variables
@@ -221,7 +220,6 @@ double C_SHP::SHP_Point2FS(XYPoint_STR p, bool RightLeft, int *i_arc, double *mi
 	SHPHandle  shpHandle;
 	DBFHandle  dbfHandle;
 	double distance, min_distance, l_offset; // l_offset is a distanced, min_offset is a percentage
-	char buf[100];
 	Arc_STR *a;
 
 	if (Ist->num_ArcsFS <= 0) return -1;
@@ -402,12 +400,13 @@ int C_SHP::SHP_writeShapeFromWaypoints(char *Instance){
 
 	// open  output shapefiles
 	snprintf(filename, sizeof(filename), "%s//%s_Waypoint", OUTPUTDIR, Instance);
-	shpHandleW = SHPCreate(buf, SHPT_POINT);
+        shpHandleW = NULL;
+	shpHandleW = SHPCreate(filename, SHPT_POINT);
 	if (shpHandleW == NULL){
 		snprintf(buf, sizeof(buf), "Error to create a SHP file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
 	}
-	dbfHandleW = DBFCreate(buf);
+	dbfHandleW = DBFCreate(filename);
 	if (dbfHandleW == NULL){
 		snprintf(buf, sizeof(buf), "Error to create a DBF file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
@@ -441,19 +440,21 @@ int C_SHP::SHP_writeShapeFromWaypoints(char *Instance){
 		shpObject.nParts = 0;
 		shpObject.padfX[0] = shpObject.dfXMin = shpObject.dfXMax = P.X;
 		shpObject.padfY[0] = shpObject.dfYMin = shpObject.dfYMax = P.Y;
-		shpObject.padfZ[0] = shpObject.padfM[0] = 0;
+		shpObject.padfZ[0] = shpObject.dfZMin = shpObject.dfZMax = 0;
+                shpObject.padfM[0] = shpObject.dfMMin = shpObject.dfMMax = 0;
 		if (SHPWriteObject(shpHandleW, -1, &shpObject) < 0){
 			snprintf(buf, sizeof(buf), "writing point  N. %d in %s", i,filename);
 			error.fatal(buf, __FUNCTION__);
 		}
 		if (DBFWriteIntegerAttribute(dbfHandleW, shpRec, 0, shpRec) < 0){
-			snprintf(buf, sizeof(buf), " writing 'id' dbf point  N. %d in %s", 99, filename);
+			snprintf(buf, sizeof(buf), " writing 'id' dbf point  N. %d in %s", shpRec, filename);
 			error.fatal(buf, __FUNCTION__);
 		}
-		if (DBFWriteStringAttribute(dbfHandleW, shpRec++, 1, (char *) "codice ") < 0){
-			snprintf(buf, sizeof(buf), " writing 'Cod' in dbf point  N. %d in %s", i,filename);
+		if (DBFWriteStringAttribute(dbfHandleW, shpRec, 1, (char *) "codice ") < 0){
+			snprintf(buf, sizeof(buf), " writing 'Cod' in dbf point  N. %d in %s", shpRec,filename);
 			error.fatal(buf, __FUNCTION__);
 		}
+                shpRec++;
 	}// while
 	delete[] shpObject.padfX;
 	delete[] shpObject.padfY;
@@ -488,12 +489,12 @@ int C_SHP::SHP_writeShapeRequests(char *Instance, C_IST *Ist){
 
 	// open  output shapefiles
 	snprintf(filename, sizeof(filename), "%s//%s_Requests", OUTPUTDIR, Instance);
-	shpHandleW = SHPCreate(buf, SHPT_POINT);
+	shpHandleW = SHPCreate(filename, SHPT_POINT);
 	if (shpHandleW == NULL){
 		snprintf(buf, sizeof(buf), "create a SHP file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
 	}
-	dbfHandleW = DBFCreate(buf);
+	dbfHandleW = DBFCreate(filename);
 	if (dbfHandleW == NULL){
 		snprintf(buf, sizeof(buf), "create a DBF file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);

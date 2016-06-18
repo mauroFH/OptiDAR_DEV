@@ -173,9 +173,9 @@ int C_SHP::SHPattributeSpeed(DBFHandle dbfHandle, int numElem){
  */
 long long C_SHP::SHPattributeNoturn(DBFHandle dbfHandle, int numElem, int index){
 	int id;
-	char buf[8];
-	snprintf(buf, 8, "NOTURN%1d", index + 1);
-	id = DBFGetFieldIndex(dbfHandle, buf);
+	char buf8[8];
+	snprintf(buf8, 8, "NOTURN%1d", index + 1);
+	id = DBFGetFieldIndex(dbfHandle, buf8);
 
 	if (DBFIsAttributeNULL(dbfHandle, numElem, id)) return -1;
 	//int forbidden_id = DBFReadIntegerAttribute(dbfHandle, numElem, id);
@@ -760,13 +760,11 @@ int C_SHP::SHPcleanDegreeZeroAndTwo_function(C_IST *Ist){
 		if (Ist->v_SHP_Arcs_List[k].from < 0) continue;
 		Ist->v_SHP_Arcs_List[na] = Ist->v_SHP_Arcs_List[k];
 		if (v_vertex_new_pos[Ist->v_SHP_Arcs_List[k].from] < 0){
-			char buf[100];
 			snprintf(buf, sizeof(buf), "\n new vertex pos negative ! Arc=%d from=%d new =%d", k, Ist->v_SHP_Arcs_List[k].from, v_vertex_new_pos[Ist->v_SHP_Arcs_List[k].from]);
 			error.fatal(buf, __FUNCTION__);
 		}
 		Ist->v_SHP_Arcs_List[na].from = v_vertex_new_pos[Ist->v_SHP_Arcs_List[na].from];
 		if (v_vertex_new_pos[Ist->v_SHP_Arcs_List[k].to] < 0){
-			char buf[100];
 			snprintf(buf, sizeof(buf), "\n new pos negative ! Arc=%d to=%d new =%d", i, Ist->v_SHP_Arcs_List[i].to, v_vertex_new_pos[Ist->v_SHP_Arcs_List[i].to]);
 			error.fatal(buf, __FUNCTION__);
 		}
@@ -900,7 +898,7 @@ int C_SHP::SHP_writeShapeFromPath(char *Instance, long narcs, long *arc, int  *i
 		snprintf(buf, sizeof(buf), "create a SHP file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
 	}
-	dbfHandleW = DBFCloneEmpty(dbfHandleI, buf);
+	dbfHandleW = DBFCloneEmpty(dbfHandleI, filename);
 	if (dbfHandleW == NULL){
 		snprintf(buf, sizeof(buf), "create a DBF file <%s>\n", filename);
 		error.fatal(buf, __FUNCTION__);
@@ -1003,7 +1001,6 @@ int C_SHP::SHP_isPointOnArc(SHPHandle  shpHandle, XYPoint_STR p, int i_arc, C_IS
 	XYPoint_STR v, w;
 	int i, shpType, numElements, rvalue;
 	double padfMinBound[4], padfMaxBound[4];
-	char buf[50];
 	Arc_STR *a;
 	IShape_STR *is;
 

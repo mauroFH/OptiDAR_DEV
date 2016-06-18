@@ -3,7 +3,6 @@
  * Licensed Materials - Property of 
  *---------------------------------------------------------------------------
  */
-
 #ifndef __DARHDEFS_H
 #define __DARHDEFS_H
 
@@ -53,7 +52,12 @@ using namespace std;
     #define SQLDIR "../Modulo-SQLServer"
 #endif
 
-#include "../Modulo-Opti/include/constants.h"
+
+/* Main header files*/
+
+#include "../Modulo-Main/constants.h"
+#include "../Modulo-Main/errors.h"
+
 
 /* Shapelib header files*/
 #include "../Modulo-ShapeLib/shapefil.h"
@@ -68,7 +72,6 @@ using namespace std;
 /* Bring in DAR header files */
 #include "../Modulo-Opti/include/random.h"
 #include "../Modulo-Opti/include/utils.h"
-#include "../Modulo-Opti/include/errors.h"
 #include "../Modulo-Opti/include/solution.h"
 #include "../Modulo-Opti/include/DAR.h"
 #include "../Modulo-Opti/include/hsv.h"
